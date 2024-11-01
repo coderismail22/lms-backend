@@ -4,7 +4,7 @@ import { TOfferedCourse } from "./offered-course.interface";
 import { OfferedCourse } from "./offered-course.model";
 import { AcademicDepartment } from "../academicDepartment/academicDepartment.model";
 import { AcademicFaculty } from "../academicFaculty/academicFaculty.model";
-import { Course } from "../Course/course.model";
+import { Course } from "../examplecourse/course.model";
 import { SemesterRegistration } from "../semester-registration/semester-registration.model";
 import { Faculty } from "../Faculty/faculty.model";
 import { hasTimeConflict } from "./offered-course.util";

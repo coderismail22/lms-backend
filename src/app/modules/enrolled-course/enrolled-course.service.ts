@@ -3,7 +3,7 @@ import httpStatus from "http-status";
 import mongoose from "mongoose";
 import QueryBuilder from "../../builder/QueryBuilder";
 import AppError from "../../errors/AppError";
-import { Course } from "../Course/course.model";
+import { Course } from "../examplecourse/course.model";
 import { Faculty } from "../Faculty/faculty.model";
 import { OfferedCourse } from "../offered-course/offered-course.model";
 import { Student } from "../student/student.model";

@@ -4,7 +4,7 @@ import { AcademicFacultyRoutes } from "../modules/academicFaculty/academicFacult
 import { AcademicSemesterRoutes } from "../modules/academicSemester/academicSemester.route";
 import { StudentRoutes } from "../modules/student/student.route";
 import { UserRoutes } from "../modules/user/user.route";
-import { AcademicCourseRoutes } from "../modules/Course/course.route";
+import { AcademicCourseRoutes } from "../modules/examplecourse/course.route";
 import { AcademicSemesterRegistrationRoutes } from "../modules/semester-registration/semester-registration.route";
 import { OfferedCourseRoutes } from "../modules/offered-course/offered-course.route";
 import { FacultyRoutes } from "../modules/Faculty/faculty.route";
