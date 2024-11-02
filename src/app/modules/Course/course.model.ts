@@ -1,11 +1,11 @@
-import { Schema, model, Types } from "mongoose";
+import { Schema, model } from "mongoose";
 import { TCourse } from "./course.interface";
 
 const CourseSchema = new Schema<TCourse>({
-  name: String,
-  description: String,
-  instructor: { type: Types.ObjectId, ref: "User" },
-  subjects: [{ type: Types.ObjectId, ref: "Subject" }],
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  instructor: { type: Schema.Types.ObjectId, ref: "User" },
+  subjects: [{ type: Schema.Types.ObjectId, ref: "Subject" }],
 });
 
-export const Course = model("Course", CourseSchema);
+export const Course = model<TCourse>("Course", CourseSchema);

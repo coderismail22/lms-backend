@@ -1,9 +1,9 @@
 import { Types } from "mongoose";
 
 //Subject Type
-export type TSubject = {
+export type TTopic = {
   name: string;
   description: string;
-  courseId: Types.ObjectId;
-  topics: Types.ObjectId[];
+  subjectId: Types.ObjectId;
+  lessons: Types.ObjectId[];
 };
