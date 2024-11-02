@@ -1,47 +1,28 @@
 import { z } from "zod";
-
-const preRequisiteCourse = z.object({
-  course: z.string(),
+const subjects = z.object({
+  name: z.string(),
   isDeleted: z.boolean().optional(),
 });
 
 const createCourseValidationSchema = z.object({
   body: z.object({
-    title: z.string(),
-    prefix: z.string(),
-    code: z.number(),
-    credits: z.number(),
-    preRequisiteCourses: z.array(preRequisiteCourse).optional(), // Optional , Because Some Courses Don't Have Any Prerequisite Course
-    isDeleted: z.boolean().optional(),
+    name: z.string(),
+    description: z.string(),
+    instructor: z.string(),
+    subjects: z.array(subjects),
   }),
-});
-
-// Update Course Validation Schema
-const updatePreRequisiteCourse = z.object({
-  course: z.string(),
-  isDeleted: z.boolean().optional(),
 });
 
 const updateCourseValidationSchema = z.object({
   body: z.object({
-    title: z.string().optional(),
-    prefix: z.string().optional(),
-    code: z.number().optional(),
-    credits: z.number().optional(),
-    preRequisiteCourses: z.array(updatePreRequisiteCourse).optional(), // Optional , Because Some Courses Don't Have Any Prerequisite Course
-    isDeleted: z.boolean().optional(),
-  }),
-});
-
-// CourseFaculty Validation Schema
-const facultiesWithCourseValidationSchema = z.object({
-  body: z.object({
-    faculties: z.array(z.string()),
+    name: z.string().optional(),
+    description: z.string().optional(),
+    instructor: z.string().optional(),
+    subjects: z.array(subjects).optional(),
   }),
 });
 
 export const CourseValidations = {
   createCourseValidationSchema,
   updateCourseValidationSchema,
-  facultiesWithCourseValidationSchema,
 };
