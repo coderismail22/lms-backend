@@ -14,6 +14,8 @@ router.post(
   CourseControllers.createCourse,
 );
 
+
+
 // Update a course
 router.patch(
   "/:id",
@@ -51,4 +53,4 @@ router.delete(
   CourseControllers.deleteCourse,
 );
 
-export const AcademicCourseRoutes = router;
+export const CourseRoutes = router;

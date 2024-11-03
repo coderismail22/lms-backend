@@ -9,7 +9,7 @@ const createCourseValidationSchema = z.object({
     name: z.string(),
     description: z.string(),
     instructor: z.string(),
-    subjects: z.array(subjects),
+    subjects: z.array(subjects).optional(),
   }),
 });
 

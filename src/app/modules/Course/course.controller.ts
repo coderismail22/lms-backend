@@ -5,6 +5,7 @@ import { CourseServices } from "./course.service";
 
 // Create a new course
 const createCourse = catchAsync(async (req, res) => {
+  console.log("course data", req.body);
   const result = await CourseServices.createCourseIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -13,6 +14,8 @@ const createCourse = catchAsync(async (req, res) => {
     data: result,
   });
 });
+
+
 
 // Update a course
 const updateCourse = catchAsync(async (req, res) => {

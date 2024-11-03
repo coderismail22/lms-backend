@@ -9,6 +9,8 @@ const createCourseIntoDB = async (course: TCourse) => {
   return result;
 };
 
+
+
 // TODO: Incomplete
 // Update a course
 const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
