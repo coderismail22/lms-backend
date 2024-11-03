@@ -1,81 +1,31 @@
 import express from "express";
 import validateRequest from "../../middlewares/validateRequest";
-import { CourseValidations } from "./topic.validation";
-import { CourseControllers } from "./topic.controller";
-import { CourseFaculty } from "./topic.model";
-import { USER_ROLE } from "../user/user.constant";
-import auth from "../../middlewares/auth";
+import { TopicControllers } from "./topic.controller";
+import { TopicValidations } from "./topic.validation";
+
 const router = express.Router();
 
-// Create a course
 router.post(
-  "/create-academic-course",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  validateRequest(CourseValidations.createCourseValidationSchema),
-  CourseControllers.createCourse,
+  "/create-topic",
+  validateRequest(TopicValidations.createTopicValidationSchema),
+  TopicControllers.createTopic,
 );
 
-// Update a course
+router.get("/:topicId", TopicControllers.getTopic);
+router.get("/", TopicControllers.getAllTopics);
+
 router.patch(
-  "/:id",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  validateRequest(CourseValidations.updateCourseValidationSchema),
-  CourseControllers.updateCourse,
+  "/update-topic/:topicId",
+  validateRequest(TopicValidations.updateTopicValidationSchema),
+  TopicControllers.updateTopic,
 );
 
-// Assign Faculties With Course
-router.put(
-  "/:courseId/assign-faculties",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  validateRequest(CourseValidations.facultiesWithCourseValidationSchema),
-  CourseControllers.assignFacultiesWithCourseIntoDB,
+router.patch(
+  "/link-lesson/:topicId",
+  validateRequest(TopicValidations.linkLessonToTopicValidationSchema),
+  TopicControllers.linkLessonToTopic,
 );
 
-// Get Faculties With Course
-router.get(
-  "/:courseId/get-faculties",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  CourseControllers.getFacultiesWithCourseFromDB,
-);
+router.delete("/delete-topic/:topicId", TopicControllers.deleteTopic);
 
-// Discharge Faculties From Course
-router.delete(
-  "/:courseId/remove-faculties",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-
-  validateRequest(CourseValidations.facultiesWithCourseValidationSchema),
-  CourseControllers.removeFacultiesFromCourseFromDB,
-);
-
-//Get all courses
-router.get(
-  "/get-all-academic-courses",
-  auth(
-    USER_ROLE.superAdmin,
-    USER_ROLE.admin,
-    USER_ROLE.faculty,
-    USER_ROLE.student,
-  ),
-  CourseControllers.getAllCourses,
-);
-
-// Single a single course
-router.get(
-  "/:id",
-  auth(
-    USER_ROLE.superAdmin,
-    USER_ROLE.admin,
-    USER_ROLE.faculty,
-    USER_ROLE.student,
-  ),
-  CourseControllers.getSingleCourse,
-);
-
-// Delete a single course
-router.delete(
-  "/:id",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
-  CourseControllers.deleteCourse,
-);
-
-export const AcademicCourseRoutes = router;
+export default router;

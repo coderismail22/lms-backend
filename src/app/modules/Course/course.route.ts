@@ -28,4 +28,4 @@ router.get("/get-all-courses", CourseControllers.getAllCourses);
 
 router.delete("/delete-course/:id", CourseControllers.deleteCourse);
 
-export default router;
+export const CourseRoutes = router;

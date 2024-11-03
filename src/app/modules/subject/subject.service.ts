@@ -55,7 +55,7 @@ const deleteSubjectFromDB = async (subjectId: string) => {
   return subject.save();
 };
 
-export default {
+export const SubjectServices = {
   createSubjectIntoDB,
   updateSubjectInDB,
   linkTopicToSubject,

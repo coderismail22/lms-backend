@@ -67,7 +67,7 @@ const deleteSubject = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export default {
+export const SubjectControllers = {
   createSubject,
   updateSubject,
   linkTopicToSubject,

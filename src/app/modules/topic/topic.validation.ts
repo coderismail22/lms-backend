@@ -1,47 +1,34 @@
 import { z } from "zod";
 
-const preRequisiteCourse = z.object({
-  course: z.string(),
-  isDeleted: z.boolean().optional(),
-});
-
-const createCourseValidationSchema = z.object({
+const createTopicValidationSchema = z.object({
   body: z.object({
-    title: z.string(),
-    prefix: z.string(),
-    code: z.number(),
-    credits: z.number(),
-    preRequisiteCourses: z.array(preRequisiteCourse).optional(), // Optional , Because Some Courses Don't Have Any Prerequisite Course
-    isDeleted: z.boolean().optional(),
+    name: z.string().min(1, "Topic name is required"),
+    description: z.string().optional(),
+    subjectId: z.string().min(1, "Subject ID is required"),
   }),
 });
 
-// Update Course Validation Schema
-const updatePreRequisiteCourse = z.object({
-  course: z.string(),
-  isDeleted: z.boolean().optional(),
-});
-
-const updateCourseValidationSchema = z.object({
+const updateTopicValidationSchema = z.object({
   body: z.object({
-    title: z.string().optional(),
-    prefix: z.string().optional(),
-    code: z.number().optional(),
-    credits: z.number().optional(),
-    preRequisiteCourses: z.array(updatePreRequisiteCourse).optional(), // Optional , Because Some Courses Don't Have Any Prerequisite Course
-    isDeleted: z.boolean().optional(),
+    name: z.string().optional(),
+    description: z.string().optional(),
+  }),
+  params: z.object({
+    topicId: z.string().min(1, "Topic ID is required"),
   }),
 });
 
-// CourseFaculty Validation Schema
-const facultiesWithCourseValidationSchema = z.object({
+const linkLessonToTopicValidationSchema = z.object({
   body: z.object({
-    faculties: z.array(z.string()),
+    lessonId: z.string().min(1, "Lesson ID is required"),
+  }),
+  params: z.object({
+    topicId: z.string().min(1, "Topic ID is required"),
   }),
 });
 
-export const CourseValidations = {
-  createCourseValidationSchema,
-  updateCourseValidationSchema,
-  facultiesWithCourseValidationSchema,
+export const TopicValidations = {
+  createTopicValidationSchema,
+  updateTopicValidationSchema,
+  linkLessonToTopicValidationSchema,
 };

@@ -1,187 +1,68 @@
-import QueryBuilder from "../../builder/QueryBuilder";
-import { courseSearchableFields } from "./topic.contant";
-import { TCourse, TCourseFaculty } from "./topic.interface";
-import { Course, CourseFaculty } from "./topic.model";
+import httpStatus from "http-status";
+import { TTopic } from "./topic.interface";
+import { Topic } from "./topic.model";
+import AppError from "../../errors/AppError";
+import { Lesson } from "../lesson/lesson.model";
 
-// Create a course
-const createCourseIntoDB = async (course: TCourse) => {
-  const result = Course.create(course);
-  return result;
+// Create a new topic in the database
+const createTopicIntoDB = async (topicData: TTopic) => {
+  return Topic.create(topicData);
 };
 
-// TODO: Incomplete
-// Update a course
-const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
-  const session = await Course.startSession(); // Start a session for the transaction
-  session.startTransaction(); // Start a new transaction
+// Get a single topic by ID
+const getTopicFromDB = async (topicId: string) => {
+  const topic = await Topic.findById(topicId).populate("lessons");
+  if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
+  return topic;
+};
 
-  try {
-    const { preRequisiteCourses, ...remainingCourseData } = payload;
-    console.log("id", id);
-    console.log("prereq", remainingCourseData);
+// Get all topics
+const getAllTopicsFromDB = async () => {
+  return Topic.find({ isDeleted: false }).populate("lessons");
+};
 
-    // Step-01: Update Basic Information
-    const updatedBasicCourseInfo = await Course.findByIdAndUpdate(
-      id,
-      remainingCourseData,
-      {
-        new: true,
-        runValidators: true,
-        session, // Ensure this update is part of the transaction
-      },
-    );
+// Update a topic
+const updateTopicInDB = async (topicId: string, topicData: Partial<TTopic>) => {
+  const topic = await Topic.findByIdAndUpdate(topicId, topicData, {
+    new: true,
+  });
+  if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
+  return topic;
+};
 
-    // Step-02: Check if there are any prerequisiteCourses
-    if (preRequisiteCourses && preRequisiteCourses.length > 0) {
-      // Filter out the deleted prerequisite courses and get an array of Id strings
-      const prerequisiteCoursesToDelete = preRequisiteCourses
-        .filter(
-          (eachPreReqCourse) =>
-            eachPreReqCourse.course && eachPreReqCourse.isDeleted,
-        )
-        .map((eachCourse) => eachCourse.course);
-      console.log(prerequisiteCoursesToDelete);
+// Link a lesson to a topic
+const linkLessonToTopic = async (data: {
+  topicId: string;
+  lessonId: string;
+}) => {
+  const { topicId, lessonId } = data;
 
-      // Remove specific courses from the prerequisiteCourses array
-      await Course.findByIdAndUpdate(
-        id,
-        {
-          $pull: {
-            preRequisiteCourses: {
-              course: { $in: prerequisiteCoursesToDelete },
-            },
-          },
-        },
-        { session }, // Include in the transaction
-      );
-    }
+  const topic = await Topic.findById(topicId);
+  if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
 
-    // Step-03: Add new prerequisite courses
-    const prerequisiteCoursesToAdd = preRequisiteCourses?.filter(
-      (eachCourse) => eachCourse.course && !eachCourse.isDeleted,
-    );
+  const lesson = await Lesson.findById(lessonId);
+  if (!lesson) throw new AppError(httpStatus.NOT_FOUND, "Lesson not found");
 
-    if (prerequisiteCoursesToAdd && prerequisiteCoursesToAdd.length > 0) {
-      await Course.findByIdAndUpdate(
-        id,
-        {
-          $addToSet: {
-            preRequisiteCourses: { $each: prerequisiteCoursesToAdd },
-          },
-        },
-        { session }, // Include in the transaction
-      );
-    }
-
-    // Step-04: Commit the transaction if everything goes well
-    await session.commitTransaction();
-
-    // Populate the result
-    const result = await Course.findById(id).populate(
-      "preRequisiteCourses.course",
-    );
-
-    return result;
-  } catch (error) {
-    // If anything fails, abort the transaction
-    await session.abortTransaction();
-    console.error("Transaction aborted due to error:", error);
-    throw error; // Re-throw the error after aborting
-  } finally {
-    // End the session whether the transaction succeeded or failed
-    session.endSession();
+  if (!topic.lessons.includes(lesson._id)) {
+    topic.lessons.push(lesson._id);
   }
+
+  return topic.save();
 };
 
-// Assign faculties with courses
-// TODO: Understand $each deeply
-const assignFacultiesWithCourseIntoDB = async (
-  id: string,
-  payload: Partial<TCourseFaculty>,
-) => {
-  const result = await CourseFaculty.findByIdAndUpdate(
-    id,
-    {
-      course: id,
-      $addToSet: { faculties: { $each: payload } },
-    },
-    {
-      upsert: true,
-      new: true,
-    },
-  );
-  return result;
+// Soft delete a topic
+const deleteTopicFromDB = async (topicId: string) => {
+  const topic = await Topic.findById(topicId);
+  if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
+  topic.isDeleted = true;
+  return topic.save();
 };
 
-// Get course  with faculties
-const getCourseWithFacultyFromDB = async (courseId: string) => {
-  const result = CourseFaculty.findOne({ course: courseId }).populate(
-    "faculties",
-  );
-  return result;
-};
-
-// Remove faculties from courses
-// TODO: Understand  $in
-const removeFacultiesFromCourseFromDB = async (
-  id: string,
-  payload: Partial<TCourseFaculty>,
-) => {
-  const result = await CourseFaculty.findByIdAndUpdate(
-    id,
-    {
-      course: id,
-      $pull: { faculties: { $in: payload } },
-    },
-    {
-      new: true,
-    },
-  );
-  return result;
-};
-
-// Get all courses
-const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courseQuery = new QueryBuilder(
-    Course.find().populate("preRequisiteCourses.course"),
-    query,
-  )
-    .search(courseSearchableFields)
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
-  const result = await courseQuery.modelQuery;
-  return result;
-};
-
-// Get a single course
-const getSingleCourseFromDB = async (id: string) => {
-  const result = Course.findById(id).populate("preRequisiteCourses.course");
-  return result;
-};
-
-// Delete a single course
-const deleteCourseFromDB = async (id: string) => {
-  const result = Course.findByIdAndUpdate(
-    id,
-    {
-      isDeleted: true,
-    },
-    {
-      new: true,
-    },
-  );
-  return result;
-};
-
-export const CourseServices = {
-  createCourseIntoDB,
-  assignFacultiesWithCourseIntoDB,
-  getCourseWithFacultyFromDB,
-  removeFacultiesFromCourseFromDB,
-  getAllCoursesFromDB,
-  getSingleCourseFromDB,
-  deleteCourseFromDB,
-  updateCourseIntoDB,
+export const TopicServices = {
+  createTopicIntoDB,
+  getTopicFromDB,
+  getAllTopicsFromDB,
+  updateTopicInDB,
+  linkLessonToTopic,
+  deleteTopicFromDB,
 };
