@@ -2,77 +2,64 @@ import httpStatus from "http-status";
 import { TSubject } from "./subject.interface";
 import { Subject } from "./subject.model";
 import AppError from "../../errors/AppError";
-import { Course } from "../course/course.model";
+import { Topic } from "../topic/topic.model";
 
-// Create a subject
 const createSubjectIntoDB = async (subject: TSubject) => {
-  const result = Subject.create(subject);
-  return result;
+  return Subject.create(subject);
 };
 
-// Link subject to a course
-const linkSubjectToCourse = async (data: {
-  courseId: string;
-  subjectId: string;
-}) => {
-  const { courseId, subjectId } = data;
-  // Find Course
-  const course = await Course.findById(courseId);
-  if (!course) {
-    throw new AppError(httpStatus.NOT_FOUND, "Course not found.");
-  }
-  // Find Subject
-  const subject = await Subject.findById(subjectId);
-  if (!subject) {
-    throw new AppError(httpStatus.NOT_FOUND, "Subject not found.");
-  }
-
-  course.subjects.push(subject._id);
-  const result = await course.save();
-
-  return result;
-};
-
-// Get all subjects
-const getSubjectsFromDB = async () => {
-  const result = Subject.find();
-  return result;
-};
-// Get a single subject
-const getSubjectFromDB = async (id: string) => {
-  const result = Subject.create(id);
-  return result;
-};
-
-// Update a  subject
-const updateSubjectIntoDB = async (id: string, payload: Partial<TSubject>) => {
-  const result = Subject.findByIdAndUpdate(id, payload, {
+const updateSubjectInDB = async (
+  subjectId: string,
+  subjectData: Partial<TSubject>,
+) => {
+  const subject = await Subject.findByIdAndUpdate(subjectId, subjectData, {
     new: true,
-    runValidators: true,
   });
-  return result;
+  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+  return subject;
 };
 
-// Delete a subject
-const deleteSubjectFromDB = async (id: string) => {
-  const result = Subject.findByIdAndUpdate(
-    id,
-    {
-      isDeleted: true,
-    },
-    {
-      new: true,
-      runValidators: true,
-    },
-  );
-  return result;
+const linkTopicToSubject = async (data: {
+  subjectId: string;
+  topicId: string;
+}) => {
+  const { subjectId, topicId } = data;
+
+  const subject = await Subject.findById(subjectId);
+  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+
+  const topic = await Topic.findById(topicId);
+  if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
+
+  if (!subject.topics.includes(topic._id)) {
+    subject.topics.push(topic._id);
+  }
+
+  return subject.save();
 };
 
-export const SubjectServices = {
+const getSubjectFromDB = async (subjectId: string) => {
+  const subject = await Subject.findById(subjectId).populate("topics");
+  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+  return subject;
+};
+
+const getAllSubjectsFromDB = async () => {
+  return Subject.find({ isDeleted: false }).populate("topics");
+};
+
+const deleteSubjectFromDB = async (subjectId: string) => {
+  const subject = await Subject.findById(subjectId);
+  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+  subject.isDeleted = true;
+  return subject.save();
+};
+
+export default {
   createSubjectIntoDB,
-  linkSubjectToCourse,
-  getSubjectsFromDB,
+  updateSubjectInDB,
+  linkTopicToSubject,
   getSubjectFromDB,
-  updateSubjectIntoDB,
+  getAllSubjectsFromDB,
   deleteSubjectFromDB,
 };

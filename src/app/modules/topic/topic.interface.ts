@@ -6,4 +6,5 @@ export type TTopic = {
   description: string;
   subjectId: Types.ObjectId;
   lessons: Types.ObjectId[];
+  isDeleted: boolean;
 };

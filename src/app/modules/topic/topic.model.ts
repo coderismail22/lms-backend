@@ -6,6 +6,7 @@ const TopicSchema = new Schema<TTopic>({
   description: { type: String },
   subjectId: { type: Schema.Types.ObjectId, ref: "Subject" },
   lessons: [{ type: Schema.Types.ObjectId, ref: "Lesson" }],
+  isDeleted: { type: Boolean, default: false },
 });
 
 export const Topic = model<TTopic>("Topic", TopicSchema);

@@ -6,6 +6,7 @@ const LessonSchema = new Schema<TLesson>({
   content: { type: String, required: true },
   type: { type: String, enum: ["video", "assignment", "post"], required: true },
   topicId: { type: Schema.Types.ObjectId, ref: "Topic", required: true },
+  isDeleted: { type: Boolean, default: false },
 });
 
 export const Lesson = model<TLesson>("Lesson", LessonSchema);

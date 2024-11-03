@@ -1,62 +1,68 @@
-import QueryBuilder from "../../builder/QueryBuilder";
-import { courseSearchableFields } from "./course.constant";
+import httpStatus from "http-status";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
+import AppError from "../../errors/AppError";
+import { Subject } from "../subject/subject.model";
 
-// Create a course
 const createCourseIntoDB = async (course: TCourse) => {
-  const result = Course.create(course);
-  return result;
+  return Course.create(course);
 };
 
-
-
-// TODO: Incomplete
-// Update a course
-const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
-  console.log(id, payload);
-  return null;
+const updateCourseInDB = async (
+  courseId: string,
+  courseData: Partial<TCourse>,
+) => {
+  const course = await Course.findByIdAndUpdate(courseId, courseData, {
+    new: true,
+  });
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+  return course;
 };
 
-// Get all courses
-const getAllCoursesFromDB = async (query: Record<string, unknown>) => {
-  const courseQuery = new QueryBuilder(
-    Course.find().populate("preRequisiteCourses.course"),
-    query,
-  )
-    .search(courseSearchableFields)
-    .filter()
-    .sort()
-    .paginate()
-    .fields();
-  const result = await courseQuery.modelQuery;
-  return result;
+const linkSubjectToCourse = async (data: {
+  courseId: string;
+  subjectId: string;
+}) => {
+  const { courseId, subjectId } = data;
+
+  const course = await Course.findById(courseId);
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+
+  const subject = await Subject.findById(subjectId);
+  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+
+  if (!course.subjects.includes(subject._id)) {
+    course.subjects.push(subject._id);
+  }
+
+  return course.save();
 };
 
-// Get a single course
-const getSingleCourseFromDB = async (id: string) => {
-  const result = Course.findById(id).populate("preRequisiteCourses.course");
-  return result;
+const getCourseFromDB = async (courseId: string) => {
+  const course = await Course.findById(courseId).populate("subjects");
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+  return course;
 };
 
-// Delete a single course
-const deleteCourseFromDB = async (id: string) => {
-  const result = Course.findByIdAndUpdate(
-    id,
-    {
-      isDeleted: true,
-    },
-    {
-      new: true,
-    },
+const getAllCoursesFromDB = async () => {
+  return Course.find({ isDeleted: false }).populate("subjects");
+};
+
+const deleteCourseInDB = async (courseId: string) => {
+  const course = await Course.findByIdAndUpdate(
+    courseId,
+    { isDeleted: true },
+    { new: true },
   );
-  return result;
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+  return course;
 };
 
 export const CourseServices = {
   createCourseIntoDB,
+  updateCourseInDB,
+  linkSubjectToCourse,
+  getCourseFromDB,
   getAllCoursesFromDB,
-  getSingleCourseFromDB,
-  deleteCourseFromDB,
-  updateCourseIntoDB,
+  deleteCourseInDB,
 };

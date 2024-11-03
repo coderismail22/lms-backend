@@ -1,73 +1,77 @@
+import { Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
-import sendResponse from "../../utils/sendResponse";
 import { CourseServices } from "./course.service";
+import sendResponse from "../../utils/sendResponse";
 
-// Create a new course
-const createCourse = catchAsync(async (req, res) => {
-  console.log("course data", req.body);
+const createCourse = catchAsync(async (req: Request, res: Response) => {
   const result = await CourseServices.createCourseIntoDB(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Course is created successfully",
+    message: "Course created successfully",
     data: result,
   });
 });
 
-
-
-// Update a course
-const updateCourse = catchAsync(async (req, res) => {
+const updateCourse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await CourseServices.updateCourseIntoDB(id, req.body);
+  const result = await CourseServices.updateCourseInDB(id, req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Course is updated successfully",
+    message: "Course updated successfully",
     data: result,
   });
 });
 
-// Get all the courses
-const getAllCourses = catchAsync(async (req, res) => {
-  const result = await CourseServices.getAllCoursesFromDB(req.query);
+const linkSubjectToCourse = catchAsync(async (req: Request, res: Response) => {
+  const result = await CourseServices.linkSubjectToCourse(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Retrieved all courses successfully",
+    message: "Subject linked to course successfully",
     data: result,
   });
 });
 
-// Get a single course
-const getSingleCourse = catchAsync(async (req, res) => {
+const getCourse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await CourseServices.getSingleCourseFromDB(id);
+  const result = await CourseServices.getCourseFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Retrieved single course successfully",
+    message: "Course retrieved successfully",
     data: result,
   });
 });
 
-// Delete a course
-const deleteCourse = catchAsync(async (req, res) => {
-  const { id } = req.params;
-  const result = await CourseServices.deleteCourseFromDB(id);
+const getAllCourses = catchAsync(async (req: Request, res: Response) => {
+  const result = await CourseServices.getAllCoursesFromDB();
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
-    message: "Course is deleted successfully",
+    message: "Courses retrieved successfully",
+    data: result,
+  });
+});
+
+const deleteCourse = catchAsync(async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const result = await CourseServices.deleteCourseInDB(id);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Course deleted successfully",
     data: result,
   });
 });
 
 export const CourseControllers = {
   createCourse,
-  getAllCourses,
-  getSingleCourse,
   updateCourse,
+  linkSubjectToCourse,
+  getCourse,
+  getAllCourses,
   deleteCourse,
 };

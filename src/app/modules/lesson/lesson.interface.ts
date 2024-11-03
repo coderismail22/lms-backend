@@ -5,4 +5,5 @@ export type TLesson = {
   content: string;
   type: "video" | "assignment" | "post";
   topicId: Types.ObjectId;
+  isDeleted: boolean;
 };
