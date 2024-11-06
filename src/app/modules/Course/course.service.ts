@@ -45,7 +45,18 @@ const getCourseFromDB = async (courseId: string) => {
 };
 
 const getAllCoursesFromDB = async () => {
-  return Course.find({ isDeleted: false }).populate("subjects");
+  const result = Course.find({ isDeleted: false }).populate({
+    path: "subjects",
+    populate: {
+      path: "topics",
+      populate: {
+        path: "lessons",
+        model: "Lesson",
+      },
+      model: "Topic",
+    },
+  });
+  return result;
 };
 
 const deleteCourseInDB = async (courseId: string) => {

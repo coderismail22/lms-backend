@@ -22,4 +22,4 @@ router.patch(
 
 router.delete("/delete-lesson/:lessonId", LessonControllers.deleteLesson);
 
-export default router;
+export const LessonRoutes = router;

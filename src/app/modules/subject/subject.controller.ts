@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
-import catchAsync from "../utils/catchAsync";
-import SubjectServices from "../services/subject.service";
-import sendResponse from "../utils/sendResponse";
+
 import httpStatus from "http-status";
+import catchAsync from "../../utils/catchAsync";
+import { SubjectServices } from "./subject.service";
+import sendResponse from "../../utils/sendResponse";
 
 const createSubject = catchAsync(async (req: Request, res: Response) => {
   const result = await SubjectServices.createSubjectIntoDB(req.body);
@@ -58,7 +59,7 @@ const getAllSubjects = catchAsync(async (req: Request, res: Response) => {
 
 const deleteSubject = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const result = await SubjectServices.deleteSubjectInDB(id);
+  const result = await SubjectServices.deleteSubjectFromDB(id);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

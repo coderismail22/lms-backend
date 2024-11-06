@@ -20,7 +20,7 @@ router.patch(
   TopicControllers.updateTopic,
 );
 
-router.patch(
+router.post(
   "/link-lesson/:topicId",
   validateRequest(TopicValidations.linkLessonToTopicValidationSchema),
   TopicControllers.linkLessonToTopic,
@@ -28,4 +28,4 @@ router.patch(
 
 router.delete("/delete-topic/:topicId", TopicControllers.deleteTopic);
 
-export default router;
+export const TopicRoutes = router;

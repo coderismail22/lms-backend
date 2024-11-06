@@ -1,17 +1,27 @@
 import { Router } from "express";
 import { CourseRoutes } from "../modules/course/course.route";
-import { CourseSubjectRoutes } from "../modules/subject/subject.route";
+import { SubjectRoutes } from "../modules/subject/subject.route";
+import { TopicRoutes } from "../modules/topic/topic.route";
+import { LessonRoutes } from "../modules/lesson/lesson.route";
 
 const router = Router();
 
 const moduleRoutes = [
   {
-    path: "/course",
+    path: "/courses",
     route: CourseRoutes,
   },
   {
     path: "/subjects",
-    route: CourseSubjectRoutes,
+    route: SubjectRoutes,
+  },
+  {
+    path: "/topics",
+    route: TopicRoutes,
+  },
+  {
+    path: "/lessons",
+    route: LessonRoutes,
   },
 ];
 

@@ -5,7 +5,8 @@ import AppError from "../../errors/AppError";
 
 // Create a new lesson in the database
 const createLessonInDB = async (lessonData: TLesson) => {
-  return Lesson.create(lessonData);
+  const result = Lesson.create(lessonData);
+  return result;
 };
 
 // Get a single lesson by ID

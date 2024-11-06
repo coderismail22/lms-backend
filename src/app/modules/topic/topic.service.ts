@@ -36,6 +36,8 @@ const linkLessonToTopic = async (data: {
   lessonId: string;
 }) => {
   const { topicId, lessonId } = data;
+  console.log(topicId)
+  console.log(lessonId)
 
   const topic = await Topic.findById(topicId);
   if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
