@@ -5,42 +5,51 @@ import { Student } from "./student.model";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
 
-// Create a student
-// const createStudent = async ({ studentId: string, courseId: string }) => {};
-
 // Initialize progress when a student enrolls in a course
-const initializeCourseProgress = async (
-  studentId: string,
-  courseId: string,
-) => {
-  // Type-safe find and populate operations
-  const student = await Student.findById(studentId).populate<{
-    courses: ICourseProgress[];
-  }>({
-    path: "courses",
-    populate: {
-      path: "subjects.topics.lessons.lessonId",
-    },
-  });
+const initializeCourseProgress = async ({
+  studentId,
+  courseId,
+}: {
+  studentId: string;
+  courseId: string;
+}) => {
+  console.log(studentId, courseId);
+  const student = await Student.findById(studentId);
 
   if (!student) throw new Error("Student not found");
 
+  // Define the type of the populated course document
   const course = await Course.findById(courseId).populate<{
-    subjects: {
+    subjects: Array<{
       _id: Types.ObjectId;
-      topics: { _id: Types.ObjectId; lessons: { _id: Types.ObjectId }[] }[];
-    }[];
+      topics: Array<{
+        _id: Types.ObjectId;
+        lessons: Array<{
+          _id: Types.ObjectId;
+        }>;
+      }>;
+    }>;
   }>({
     path: "subjects",
-    populate: { path: "topics.lessons" },
+    populate: {
+      path: "topics",
+      populate: {
+        path: "lessons",
+        model: "Lesson",
+      },
+      model: "Topic",
+    },
+    model: "Subject",
   });
 
   if (!course) throw new Error("Course not found");
 
+  // Check if the student already has progress for this course
   const courseProgress = student.courses.find(
-    (course) => course.courseId.toString() === courseId,
+    (c) => c.courseId.toString() === courseId,
   );
 
+  // If no progress exists, initialize progress for all subjects, topics, and lessons
   if (!courseProgress) {
     const newCourseProgress: ICourseProgress = {
       courseId: course._id,
@@ -57,99 +66,77 @@ const initializeCourseProgress = async (
       })),
     };
 
+    // Add the new course progress to the student's courses array
     student.courses.push(newCourseProgress);
-    await student.save();
-    return newCourseProgress;
+    await student.save(); // Save the updated student document
+    return newCourseProgress; // Return the new course progress for confirmation
   } else {
+    // If progress already exists, return the existing progress
     return courseProgress;
   }
 };
 
+// Create a student
+const createStudentInDB = async (data: {
+  name: string;
+  email: string;
+  courses?: { courseId: string }[];
+}) => {
+  // Create the student
+  const student = await Student.create({
+    name: data.name,
+    email: data.email,
+    courses: [],
+  });
+  return student;
+};
+
 const getLastCompletedLesson = async (studentId: string, courseId: string) => {
-  const student = await Student.findById(studentId).populate<{
-    courses: ICourseProgress[];
-  }>({
+  const student = await Student.findById(studentId).populate({
     path: "courses",
+    match: { courseId }, // Match the specific course in the courses array by courseId
     populate: {
-      path: "subjects.topics.lessons.lessonId",
+      path: "subjects",
+      populate: {
+        path: "topics",
+        populate: {
+          path: "lessons",
+          model: "Lesson", // Populate lessons using the Lesson model
+        },
+        model: "Topic", // Populate topics using the Topic model
+      },
     },
   });
 
-  if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
+  if (!student) throw new Error("Student not found");
 
+  // Find the specific course progress in the student's courses
   const courseProgress = student.courses.find(
-    (course) => course.courseId.toString() === courseId,
+    (course) => course.courseId && course.courseId.toString() === courseId,
   );
 
-  if (!courseProgress)
-    throw new AppError(httpStatus.NOT_FOUND, "Course progress not found");
+  if (!courseProgress) throw new Error("Course progress not found");
 
-  const course = await Course.findById(courseId).populate<{
-    subjects: {
-      _id: Types.ObjectId;
-      topics: { _id: Types.ObjectId; lessons: { _id: Types.ObjectId }[] }[];
-    }[];
-  }>({
-    path: "subjects",
-    populate: { path: "topics.lessons" },
-  });
+  // Initialize last completed lesson variable
+  let lastCompletedLessonId = null;
 
-  if (!course) throw new Error("Course not found");
-
-  // Synchronize course progress with the latest structure from Course
-  const synchronizeProgress = () => {
-    course.subjects.forEach((subject) => {
-      let subjectProgress = courseProgress.subjects.find(
-        (sub) => sub.subjectId.toString() === subject._id.toString(),
-      );
-
-      if (!subjectProgress) {
-        subjectProgress = { subjectId: subject._id, topics: [] };
-        courseProgress.subjects.push(subjectProgress);
-      }
-
-      subject.topics.forEach((topic) => {
-        let topicProgress = subjectProgress.topics.find(
-          (top) => top.topicId.toString() === topic._id.toString(),
-        );
-
-        if (!topicProgress) {
-          topicProgress = { topicId: topic._id, lessons: [] };
-          subjectProgress.topics.push(topicProgress);
+  // Iterate over subjects, topics, and lessons with null checks
+  for (const subject of courseProgress.subjects || []) {
+    for (const topic of subject.topics || []) {
+      for (const lesson of topic.lessons || []) {
+        if (!lesson.isCompleted) {
+          // Return the last completed lesson if a lesson is not completed
+          return lastCompletedLessonId;
         }
-
-        topic.lessons.forEach((lesson) => {
-          let lessonProgress = topicProgress.lessons.find(
-            (les) => les.lessonId.toString() === lesson._id.toString(),
-          );
-
-          if (!lessonProgress) {
-            lessonProgress = {
-              lessonId: lesson._id,
-              isCompleted: false,
-              completedAt: null,
-            };
-            topicProgress.lessons.push(lessonProgress);
-          }
-        });
-      });
-    });
-  };
-
-  synchronizeProgress();
-  await student.save();
-
-  // Find the last completed lesson
-  for (const subject of courseProgress.subjects) {
-    for (const topic of subject.topics) {
-      for (let i = 0; i < topic.lessons.length; i++) {
-        if (!topic.lessons[i].isCompleted) {
-          return i > 0 ? topic.lessons[i - 1].lessonId : null;
-        }
+        lastCompletedLessonId = lesson.lessonId;
       }
     }
   }
-  return null;
+
+  if (lastCompletedLessonId === null) {
+    throw new AppError(httpStatus.NOT_FOUND, "Not found any completed lesson.");
+  }
+  return lastCompletedLessonId;
 };
 
 const updateLessonProgress = async (
@@ -253,6 +240,7 @@ const updateLessonProgress = async (
 };
 
 export const StudentServices = {
+  createStudentInDB,
   initializeCourseProgress,
   getLastCompletedLesson,
   updateLessonProgress,

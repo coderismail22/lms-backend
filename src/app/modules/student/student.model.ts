@@ -47,14 +47,14 @@ const courseProgressSchema = new Schema<ICourseProgress>({
     ref: "Course",
     required: true,
   },
-  subjects: { type: [subjectProgressSchema] }, // Track progress for subjects in this course
+  subjects: { type: [subjectProgressSchema], default: [] }, // Track progress for subjects in this course
 });
 
 // Student Schema
 const studentSchema = new mongoose.Schema<IStudent>({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
-  courses: [courseProgressSchema], // Track progress for each course
+  courses: { type: [courseProgressSchema], default: [] }, // Track progress for each course
 });
 
 export const Student = model<IStudent>("Student", studentSchema);

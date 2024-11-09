@@ -4,10 +4,32 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { StudentServices } from "./student.service";
 
+const createStudent = catchAsync(async (req: Request, res: Response) => {
+  const student = await StudentServices.createStudentInDB(req.body);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    data: student,
+    message: "Student created successfully",
+  });
+});
+
+const initializeCourseProgressController = catchAsync(
+  async (req: Request, res: Response) => {
+    const result = await StudentServices.initializeCourseProgress(req.body);
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Course progress initialized successfully",
+      data: result,
+    });
+  },
+);
+
 const getLastCompletedLesson = catchAsync(
   async (req: Request, res: Response) => {
     const { studentId, courseId } = req.body;
-    console.log(studentId, courseId);
     const result = await StudentServices.getLastCompletedLesson(
       studentId,
       courseId,
@@ -39,6 +61,8 @@ const updateLessonProgress = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const StudentControllers = {
+  createStudent,
+  initializeCourseProgressController,
   getLastCompletedLesson,
   updateLessonProgress,
 };
