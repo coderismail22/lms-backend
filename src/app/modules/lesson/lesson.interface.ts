@@ -5,5 +5,7 @@ export type TLesson = {
   content: string;
   type: "video" | "assignment" | "post";
   topicId: Types.ObjectId;
+  isCompleted: boolean;
+  completedAt: Date;
   isDeleted: boolean;
 };
