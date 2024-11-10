@@ -16,7 +16,7 @@ const initializeCourseProgress = async ({
   console.log(studentId, courseId);
   const student = await Student.findById(studentId);
 
-  if (!student) throw new Error("Student not found");
+  if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
 
   // Define the type of the populated course document
   const course = await Course.findById(courseId).populate<{
@@ -42,7 +42,7 @@ const initializeCourseProgress = async ({
     model: "Subject",
   });
 
-  if (!course) throw new Error("Course not found");
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
 
   // Check if the student already has progress for this course
   const courseProgress = student.courses.find(
@@ -165,16 +165,21 @@ const updateLessonProgress = async ({
     },
   });
 
-  if (!student) throw new Error("Student not found");
+  if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
 
   // Check if the specific course progress exists for this courseId
   const courseProgress = student.courses.find(
     (course) => course.courseId.toString() === courseId,
   );
 
-  if (!courseProgress) throw new Error("Course progress not found");
+  if (!courseProgress) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Course not found for this student",
+    );
+  }
 
-  // Traverse to locate the specified lesson and mark it as completed
+  // Traverse subjects in the course to locate the specified lesson
   for (const subject of courseProgress.subjects) {
     for (const topic of subject.topics) {
       for (let i = 0; i < topic.lessons.length; i++) {
@@ -198,7 +203,11 @@ const updateLessonProgress = async ({
     }
   }
 
-  throw new Error("Lesson not found in progress data");
+  // If the specified lesson was not found in progress data, throw an error
+  throw new AppError(
+    httpStatus.NOT_FOUND,
+    "Lesson not found in course progress",
+  );
 };
 
 export const StudentServices = {
