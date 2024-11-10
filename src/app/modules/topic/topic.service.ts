@@ -3,6 +3,8 @@ import { TTopic } from "./topic.interface";
 import { Topic } from "./topic.model";
 import AppError from "../../errors/AppError";
 import { Lesson } from "../lesson/lesson.model";
+import { Course } from "../course/course.model";
+import { syncCourseProgress } from "../course/course.utils";
 
 // Create a new topic in the database
 const createTopicIntoDB = async (topicData: TTopic) => {
@@ -36,20 +38,33 @@ const linkLessonToTopic = async (data: {
   lessonId: string;
 }) => {
   const { topicId, lessonId } = data;
-  console.log(topicId)
-  console.log(lessonId)
+  console.log(topicId);
+  console.log(lessonId);
 
+  // Find the topic and check if it exists
   const topic = await Topic.findById(topicId);
   if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
 
+  // Find the lesson and check if it exists
   const lesson = await Lesson.findById(lessonId);
   if (!lesson) throw new AppError(httpStatus.NOT_FOUND, "Lesson not found");
 
+  // Link the lesson to the topic if it’s not already linked
   if (!topic.lessons.includes(lesson._id)) {
     topic.lessons.push(lesson._id);
   }
 
-  return topic.save();
+  // Save the updated topic with the new lesson
+  await topic.save();
+
+  // Find the associated course ID for the topic
+  const course = await Course.findOne({ subjects: topic.subjectId });
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+
+  // Sync course progress for all students in this course
+  await syncCourseProgress(course._id.toString());
+
+  return topic;
 };
 
 // Soft delete a topic

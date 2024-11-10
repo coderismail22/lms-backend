@@ -24,7 +24,7 @@ router.get(
 
 router.put(
   "/update-student-lesson-progress",
-  // validateRequest(StudentValidations.updateLessonProgressValidationSchema),
+  validateRequest(StudentValidations.updateLessonProgressValidationSchema),
   StudentControllers.updateLessonProgress,
 );
 

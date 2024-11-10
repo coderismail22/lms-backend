@@ -45,13 +45,7 @@ const getLastCompletedLesson = catchAsync(
 );
 
 const updateLessonProgress = catchAsync(async (req: Request, res: Response) => {
-  const { studentId, courseId, lessonId } = req.body;
-  const result = await StudentServices.updateLessonProgress(
-    studentId,
-    courseId,
-    lessonId,
-  );
-
+  const result = await StudentServices.updateLessonProgress(req.body);
   return sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

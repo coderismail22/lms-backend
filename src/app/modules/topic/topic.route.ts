@@ -21,7 +21,7 @@ router.patch(
 );
 
 router.post(
-  "/link-lesson/:topicId",
+  "/link-lesson",
   validateRequest(TopicValidations.linkLessonToTopicValidationSchema),
   TopicControllers.linkLessonToTopic,
 );

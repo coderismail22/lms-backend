@@ -54,10 +54,7 @@ const updateTopic = catchAsync(async (req: Request, res: Response) => {
 
 // Link a lesson to a topic
 const linkLessonToTopic = catchAsync(async (req: Request, res: Response) => {
-  const result = await TopicServices.linkLessonToTopic({
-    topicId: req.params.topicId,
-    lessonId: req.body.lessonId,
-  });
+  const result = await TopicServices.linkLessonToTopic(req.body);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

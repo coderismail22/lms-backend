@@ -9,13 +9,13 @@ const createStudentValidationSchema = z.object({
 
 const initializeCourseProgressValidationSchema = z.object({
   body: z.object({
-    studentId: z.string().nonempty("Student ID is required"),
-    courseId: z.string().nonempty("Course ID is required"),
+    studentId: z.string({ required_error: "Student ID is required" }),
+    courseId: z.string({ required_error: "Course ID is required" }),
   }),
 });
 
 const updateLessonProgressValidationSchema = z.object({
-  params: z.object({
+  body: z.object({
     studentId: z.string({ required_error: "Student ID is required" }),
     courseId: z.string({ required_error: "Course ID is required" }),
     lessonId: z.string({ required_error: "Lesson ID is required" }),

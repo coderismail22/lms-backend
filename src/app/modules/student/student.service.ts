@@ -139,104 +139,66 @@ const getLastCompletedLesson = async (studentId: string, courseId: string) => {
   return lastCompletedLessonId;
 };
 
-const updateLessonProgress = async (
-  studentId: string,
-  courseId: string,
-  lessonId: string,
-) => {
+const updateLessonProgress = async ({
+  studentId,
+  courseId,
+  lessonId,
+}: {
+  studentId: string;
+  courseId: string;
+  lessonId: string;
+}) => {
   const student = await Student.findById(studentId).populate({
     path: "courses",
+    match: { courseId }, // Match the specific course
     populate: {
-      path: "subjects.topics.lessons.lessonId",
+      path: "subjects",
+      populate: {
+        path: "topics",
+        populate: {
+          path: "lessons",
+          model: "Lesson", // Ensuring `Lesson` model is used for `lessons`
+        },
+        model: "Topic", // Ensuring `Topic` model is used for `topics`
+      },
+      model: "Subject", // Ensuring `Subject` model is used for `subjects`
     },
   });
+
   if (!student) throw new Error("Student not found");
 
+  // Check if the specific course progress exists for this courseId
   const courseProgress = student.courses.find(
     (course) => course.courseId.toString() === courseId,
   );
+
   if (!courseProgress) throw new Error("Course progress not found");
 
-  const course = await Course.findById(courseId).populate({
-    path: "subjects",
-    populate: { path: "topics.lessons" },
-  });
-
-  if (!course) {
-    throw new AppError(httpStatus.NOT_FOUND, "Course not found");
-  }
-
-  const synchronizeProgress = () => {
-    course.subjects.forEach((subject) => {
-      let subjectProgress = courseProgress.subjects.find(
-        (sub) => sub.subjectId.toString() === subject._id.toString(),
-      );
-
-      if (!subjectProgress) {
-        subjectProgress = { subjectId: subject._id, topics: [] };
-        courseProgress.subjects.push(subjectProgress);
-      }
-
-      subject.topics.forEach((topic) => {
-        let topicProgress = subjectProgress.topics.find(
-          (top) => top.topicId.toString() === topic._id.toString(),
-        );
-
-        if (!topicProgress) {
-          topicProgress = { topicId: topic._id, lessons: [] };
-          subjectProgress.topics.push(topicProgress);
-        }
-
-        topic.lessons.forEach((lesson) => {
-          let lessonProgress = topicProgress.lessons.find(
-            (les) => les.lessonId.toString() === lesson._id.toString(),
-          );
-
-          if (!lessonProgress) {
-            lessonProgress = {
-              lessonId: lesson._id,
-              isCompleted: false,
-              completedAt: null,
-            };
-            topicProgress.lessons.push(lessonProgress);
-          }
-        });
-      });
-    });
-  };
-
-  synchronizeProgress();
-  await student.save();
-
-  let lessonFound = false;
-
+  // Traverse to locate the specified lesson and mark it as completed
   for (const subject of courseProgress.subjects) {
     for (const topic of subject.topics) {
       for (let i = 0; i < topic.lessons.length; i++) {
         const lessonProgress = topic.lessons[i];
 
+        // Check if the lesson matches the one we're updating
         if (lessonProgress.lessonId.toString() === lessonId) {
-          if (i === 0 || topic.lessons[i - 1].isCompleted) {
-            lessonProgress.isCompleted = true;
-            lessonProgress.completedAt = new Date();
-            lessonFound = true;
+          // Mark the lesson as completed
+          lessonProgress.isCompleted = true;
+          lessonProgress.completedAt = new Date();
 
-            if (i + 1 < topic.lessons.length) {
-              topic.lessons[i + 1].isCompleted = false; // Unlock next lesson
-            }
-          } else {
-            throw new Error("Previous lesson not completed, cannot unlock");
+          // Unlock the next lesson, if it exists
+          if (i + 1 < topic.lessons.length) {
+            topic.lessons[i + 1].isCompleted = false; // Ensure next lesson is available
           }
-          break;
+
+          await student.save();
+          return lessonProgress; // Return the updated lesson progress
         }
       }
-      if (lessonFound) break;
     }
-    if (lessonFound) break;
   }
 
-  const result = await student.save();
-  return result;
+  throw new Error("Lesson not found in progress data");
 };
 
 export const StudentServices = {

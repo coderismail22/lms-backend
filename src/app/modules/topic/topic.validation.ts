@@ -20,7 +20,7 @@ const updateTopicValidationSchema = z.object({
 
 const linkLessonToTopicValidationSchema = z.object({
   body: z.object({
-    // add topicId too
+    topicId: z.string().min(1, "Topic ID is required"),
     lessonId: z.string().min(1, "Lesson ID is required"),
   }),
 });
