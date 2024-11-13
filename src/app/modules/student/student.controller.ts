@@ -15,7 +15,7 @@ const createStudent = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const initializeCourseProgressController = catchAsync(
+const initializeCourseProgress = catchAsync(
   async (req: Request, res: Response) => {
     const result = await StudentServices.initializeCourseProgress(req.body);
     return sendResponse(res, {
@@ -23,6 +23,37 @@ const initializeCourseProgressController = catchAsync(
       success: true,
       message: "Course progress initialized successfully",
       data: result,
+    });
+  },
+);
+
+// Get all courses enrolled by the student
+const getStudentCourses = catchAsync(async (req: Request, res: Response) => {
+  const { studentId } = req.params;
+  const courses = await StudentServices.getAllCoursesForStudent(studentId);
+
+  return sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    data: courses,
+    message: "Enrolled courses retrieved successfully",
+  });
+});
+
+// Get details and progress for a specific course enrolled by the student
+const getStudentCourseDetails = catchAsync(
+  async (req: Request, res: Response) => {
+    const { studentId, courseId } = req.params;
+    const courseDetails = await StudentServices.getCourseDetailsForStudent(
+      studentId,
+      courseId,
+    );
+
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      data: courseDetails,
+      message: "Course details retrieved successfully",
     });
   },
 );
@@ -56,7 +87,9 @@ const updateLessonProgress = catchAsync(async (req: Request, res: Response) => {
 
 export const StudentControllers = {
   createStudent,
-  initializeCourseProgressController,
+  initializeCourseProgress,
+  getStudentCourses,
+  getStudentCourseDetails,
   getLastCompletedLesson,
   updateLessonProgress,
 };

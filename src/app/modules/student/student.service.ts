@@ -57,10 +57,11 @@ const initializeCourseProgress = async ({
         subjectId: subject._id,
         topics: subject.topics.map((topic) => ({
           topicId: topic._id,
-          lessons: topic.lessons.map((lesson) => ({
+          lessons: topic.lessons.map((lesson, index) => ({
             lessonId: lesson._id,
             isCompleted: false,
             completedAt: null,
+            isAccessible: index === 0, // Only the first lesson is accessible initially
           })),
         })),
       })),
@@ -89,6 +90,69 @@ const createStudentInDB = async (data: {
     courses: [],
   });
   return student;
+};
+
+// Get all courses for a specific student, with progress information
+const getAllCoursesForStudent = async (studentId: string) => {
+  const student = await Student.findById(studentId).populate({
+    path: "courses.courseId",
+    select: "name description subjects",
+  });
+
+  if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
+
+  return student.courses; // Returns courses with limited details for list view
+};
+
+// Get a single course's details for a specific student, including progress tracking
+const getCourseDetailsForStudent = async (
+  studentId: string,
+  courseId: string,
+) => {
+  console.log(studentId, courseId);
+
+  // Check if the course exists in the database
+  const courseExists = await Course.exists({ _id: courseId });
+
+  if (!courseExists) {
+    throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+  }
+
+  // Fetch the student with populated courses
+  const student = await Student.findById(studentId).populate({
+    path: "courses.courseId",
+    populate: {
+      path: "subjects",
+      populate: {
+        path: "topics",
+        populate: {
+          path: "lessons",
+          model: "Lesson",
+        },
+        model: "Topic",
+      },
+      model: "Subject",
+    },
+  });
+
+  if (!student) {
+    throw new AppError(httpStatus.NOT_FOUND, "Student not found");
+  }
+
+  // Find the specific course in the student's enrolled courses
+  const courseProgress = student.courses.find(
+    (course) => course.courseId && course.courseId._id.toString() === courseId,
+  );
+
+  // Check if the course progress was found
+  if (!courseProgress) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      "Course progress not found for the student",
+    );
+  }
+
+  return courseProgress; // Returns detailed course information with progress
 };
 
 const getLastCompletedLesson = async (studentId: string, courseId: string) => {
@@ -139,6 +203,80 @@ const getLastCompletedLesson = async (studentId: string, courseId: string) => {
   return lastCompletedLessonId;
 };
 
+// const updateLessonProgress = async ({
+//   studentId,
+//   courseId,
+//   lessonId,
+// }: {
+//   studentId: string;
+//   courseId: string;
+//   lessonId: string;
+// }) => {
+//   // Find the student and populate the necessary course structure
+//   const student = await Student.findById(studentId).populate({
+//     path: "courses",
+//     match: { courseId }, // Match the specific course in the courses array by courseId
+//     populate: {
+//       path: "subjects",
+//       populate: {
+//         path: "topics",
+//         populate: {
+//           path: "lessons",
+//           model: "Lesson", // Ensure `Lesson` model is used for `lessons`
+//         },
+//         model: "Topic", // Ensure `Topic` model is used for `topics`
+//       },
+//       model: "Subject", // Ensure `Subject` model is used for `subjects`
+//     },
+//   });
+
+//   if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
+
+//   // Check if the specific course progress exists for this courseId
+//   const courseProgress = student.courses.find(
+//     (course) => course.courseId.toString() === courseId,
+//   );
+
+//   if (!courseProgress) {
+//     throw new AppError(
+//       httpStatus.NOT_FOUND,
+//       "Course not found for this student",
+//     );
+//   }
+
+//   // Traverse subjects in the course to locate the specified lesson
+//   for (const subject of courseProgress.subjects) {
+//     for (const topic of subject.topics) {
+//       for (let i = 0; i < topic.lessons.length; i++) {
+//         const lessonProgress = topic.lessons[i];
+
+//         // Check if the lesson matches the one we're updating
+//         if (lessonProgress.lessonId.toString() === lessonId) {
+//           // Mark the lesson as completed
+//           lessonProgress.isCompleted = true;
+//           lessonProgress.completedAt = new Date();
+
+//           // Unlock the next lesson, if it exists
+//           if (i + 1 < topic.lessons.length) {
+//             topic.lessons[i + 1].isAccessible = true; // Unlock the next lesson
+//           }
+
+//           // Save the updated student document
+//           await student.save();
+//           return lessonProgress; // Return the updated lesson progress
+//         }
+//       }
+//     }
+//   }
+
+//   // If the specified lesson was not found in progress data, throw an error
+//   throw new AppError(
+//     httpStatus.NOT_FOUND,
+//     "Lesson not found in course progress",
+//   );
+// };
+
+
 const updateLessonProgress = async ({
   studentId,
   courseId,
@@ -148,20 +286,21 @@ const updateLessonProgress = async ({
   courseId: string;
   lessonId: string;
 }) => {
+  // Find the student and populate the necessary course structure
   const student = await Student.findById(studentId).populate({
     path: "courses",
-    match: { courseId }, // Match the specific course
+    match: { courseId }, // Match the specific course in the courses array by courseId
     populate: {
       path: "subjects",
       populate: {
         path: "topics",
         populate: {
           path: "lessons",
-          model: "Lesson", // Ensuring `Lesson` model is used for `lessons`
+          model: "Lesson", // Ensure `Lesson` model is used for `lessons`
         },
-        model: "Topic", // Ensuring `Topic` model is used for `topics`
+        model: "Topic", // Ensure `Topic` model is used for `topics`
       },
-      model: "Subject", // Ensuring `Subject` model is used for `subjects`
+      model: "Subject", // Ensure `Subject` model is used for `subjects`
     },
   });
 
@@ -191,11 +330,12 @@ const updateLessonProgress = async ({
           lessonProgress.isCompleted = true;
           lessonProgress.completedAt = new Date();
 
-          // Unlock the next lesson, if it exists
+          // Unlock the next lesson, if it exists (skip this for the last lesson)
           if (i + 1 < topic.lessons.length) {
-            topic.lessons[i + 1].isCompleted = false; // Ensure next lesson is available
+            topic.lessons[i + 1].isAccessible = true; // Unlock the next lesson
           }
 
+          // Save the updated student document
           await student.save();
           return lessonProgress; // Return the updated lesson progress
         }
@@ -213,6 +353,8 @@ const updateLessonProgress = async ({
 export const StudentServices = {
   createStudentInDB,
   initializeCourseProgress,
+  getAllCoursesForStudent,
+  getCourseDetailsForStudent,
   getLastCompletedLesson,
   updateLessonProgress,
 };

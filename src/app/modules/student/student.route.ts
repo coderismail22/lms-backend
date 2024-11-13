@@ -14,15 +14,22 @@ router.post(
 router.post(
   "/initialize-course-progress",
   validateRequest(StudentValidations.initializeCourseProgressValidationSchema),
-  StudentControllers.initializeCourseProgressController,
+  StudentControllers.initializeCourseProgress,
 );
 
+router.get("/:studentId/courses", StudentControllers.getStudentCourses);
+
 router.get(
+  "/:studentId/courses/:courseId",
+  StudentControllers.getStudentCourseDetails,
+);
+
+router.post(
   "/get-last-completed-lesson",
   StudentControllers.getLastCompletedLesson,
 );
 
-router.put(
+router.patch(
   "/update-student-lesson-progress",
   validateRequest(StudentValidations.updateLessonProgressValidationSchema),
   StudentControllers.updateLessonProgress,

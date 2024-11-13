@@ -16,6 +16,7 @@ const lessonProgressSchema = new Schema<ILessonProgress>({
     ref: "Lesson",
     required: true,
   },
+  isAccessible: { type: Boolean, default: false },
   isCompleted: { type: Boolean, default: false },
   completedAt: { type: Date, default: null },
 });

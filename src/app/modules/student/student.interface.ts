@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 export interface ILessonProgress {
   lessonId: Types.ObjectId;
+  isAccessible: boolean;
   isCompleted: boolean;
   completedAt?: Date | null;
 }

@@ -38,12 +38,6 @@ const linkSubjectToCourse = async (data: {
   return course.save();
 };
 
-const getCourseFromDB = async (courseId: string) => {
-  const course = await Course.findById(courseId).populate("subjects");
-  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
-  return course;
-};
-
 const getAllCoursesFromDB = async () => {
   const result = Course.find({ isDeleted: false }).populate({
     path: "subjects",
@@ -57,6 +51,26 @@ const getAllCoursesFromDB = async () => {
     },
   });
   return result;
+};
+const getCourseFromDB = async (courseId: string) => {
+  console.log(courseId);
+  const course = await Course.findById(courseId).populate({
+    path: "subjects",
+    populate: {
+      path: "topics",
+      populate: {
+        path: "lessons",
+        model: "Lesson", // Ensure `Lesson` model is used here
+      },
+      model: "Topic", // Ensure `Topic` model is used here
+    },
+    model: "Subject", // Ensure `Subject` model is used here
+  });
+
+  console.log(course);
+
+  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+  return course;
 };
 
 const deleteCourseInDB = async (courseId: string) => {

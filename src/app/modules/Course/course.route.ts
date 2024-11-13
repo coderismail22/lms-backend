@@ -23,7 +23,7 @@ router.post(
   CourseControllers.linkSubjectToCourse,
 );
 
-router.get("/get-course/:id", CourseControllers.getCourse);
+router.get("/get-single-course/:id", CourseControllers.getCourse);
 router.get("/get-all-courses", CourseControllers.getAllCourses);
 
 router.delete("/delete-course/:id", CourseControllers.deleteCourse);

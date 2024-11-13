@@ -3,6 +3,7 @@ import { Student } from "../student/student.model";
 import { Course } from "./course.model";
 
 export const syncCourseProgress = async (courseId: string) => {
+  console.log("hitting sync progress util func");
   // Define types for populated course data to ensure TypeScript recognizes them
   const course = await Course.findById(courseId).populate<{
     subjects: Array<{
@@ -73,6 +74,7 @@ export const syncCourseProgress = async (courseId: string) => {
             if (!lessonProgress) {
               topicProgress.lessons.push({
                 lessonId: lesson._id,
+                isAccessible: false,
                 isCompleted: false,
                 completedAt: null,
               });
@@ -83,7 +85,7 @@ export const syncCourseProgress = async (courseId: string) => {
 
       // Save the updated student progress with newly added content
       await student.save();
+      console.log("new lesson added successfully", student);
     }
   }
 };
-
