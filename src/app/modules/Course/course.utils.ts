@@ -4,7 +4,8 @@ import { Course } from "./course.model";
 
 export const syncCourseProgress = async (courseId: string) => {
   console.log("hitting sync progress util func");
-  // Define types for populated course data to ensure TypeScript recognizes them
+
+  // Fetch the course with all its subjects, topics, and lessons
   const course = await Course.findById(courseId).populate<{
     subjects: Array<{
       _id: Types.ObjectId;
@@ -34,15 +35,14 @@ export const syncCourseProgress = async (courseId: string) => {
   const students = await Student.find({ "courses.courseId": courseId });
 
   for (const student of students) {
-    // Locate the specific course progress for the student
     const courseProgress = student.courses.find(
       (c) => c.courseId.toString() === courseId,
     );
 
     if (courseProgress) {
-      // Iterate over each subject in the course
+      let firstLessonFound = false; // Flag to initialize only the first lesson as accessible
+
       for (const subject of course.subjects) {
-        // Ensure subjectProgress exists or initialize it
         let subjectProgress = courseProgress.subjects.find(
           (s) => s.subjectId.toString() === subject._id.toString(),
         );
@@ -52,9 +52,7 @@ export const syncCourseProgress = async (courseId: string) => {
           courseProgress.subjects.push(subjectProgress);
         }
 
-        // Iterate over each topic in the subject
         for (const topic of subject.topics) {
-          // Ensure topicProgress exists or initialize it
           let topicProgress = subjectProgress.topics.find(
             (t) => t.topicId.toString() === topic._id.toString(),
           );
@@ -64,20 +62,29 @@ export const syncCourseProgress = async (courseId: string) => {
             subjectProgress.topics.push(topicProgress);
           }
 
-          // Iterate over each lesson in the topic
           for (const lesson of topic.lessons) {
-            // Ensure lessonProgress exists or initialize it
+            // Check if lesson already exists in student's progress
             const lessonProgress = topicProgress.lessons.find(
               (l) => l.lessonId.toString() === lesson._id.toString(),
             );
 
+            // If lesson does not exist in progress, add it
             if (!lessonProgress) {
+              // Check if the previous lesson is completed and accessible for unlocking this new lesson
+              const shouldUnlockLesson =
+                !firstLessonFound ||
+                (topicProgress.lessons.length > 0 &&
+                  topicProgress.lessons[topicProgress.lessons.length - 1]
+                    .isCompleted);
+
               topicProgress.lessons.push({
                 lessonId: lesson._id,
-                isAccessible: false,
+                isAccessible: shouldUnlockLesson, // Unlock the lesson if it's the next in sequence
                 isCompleted: false,
                 completedAt: null,
               });
+
+              firstLessonFound = true; // Flag to ensure only the first lesson starts unlocked
             }
           }
         }
