@@ -11,7 +11,7 @@ router.post(
   CourseControllers.createCourse,
 );
 
-router.put(
+router.patch(
   "/update-course/:id",
   validateRequest(CourseValidations.updateCourseValidationSchema),
   CourseControllers.updateCourse,
