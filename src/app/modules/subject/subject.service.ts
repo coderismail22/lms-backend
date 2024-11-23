@@ -45,14 +45,14 @@ const getSubjectFromDB = async (subjectId: string) => {
 };
 
 const getAllSubjectsFromDB = async () => {
-  return Subject.find({ isDeleted: false }).populate("topics");
+  return Subject.find().populate("topics");
 };
 
 const deleteSubjectFromDB = async (subjectId: string) => {
   const subject = await Subject.findById(subjectId);
   if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
-  subject.isDeleted = true;
-  return subject.save();
+  const result = await subject.deleteOne();
+  return result;
 };
 
 export const SubjectServices = {
