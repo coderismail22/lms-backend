@@ -5,7 +5,7 @@ const createTeacherValidationSchema = z.object({
     teacherName: z.string().min(1, "Teacher name is required"),
     email: z.string().email("Email must be valid"),
     phone: z.string().optional(),
-    profileImg: z.string().url("Profile image must be a valid URL").optional(),
+    profileImg: z.string().optional(), //TODO: add checking if user gives profile url
     salary: z.number().optional(),
     // subject: z.string().min(1, "Subject is required"),
     // qualifications: z
