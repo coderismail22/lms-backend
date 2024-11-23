@@ -37,7 +37,7 @@ const getAllTeachers = catchAsync(async (_req: Request, res: Response) => {
 const updateTeacher = catchAsync(async (req: Request, res: Response) => {
   const result = await TeacherServices.updateTeacherInDB(
     req.params.teacherId,
-    req.body
+    req.body,
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -48,7 +48,9 @@ const updateTeacher = catchAsync(async (req: Request, res: Response) => {
 });
 
 const deleteTeacher = catchAsync(async (req: Request, res: Response) => {
-  const result = await TeacherServices.deleteTeacherFromDB(req.params.teacherId);
+  const result = await TeacherServices.deleteTeacherFromDB(
+    req.params.teacherId,
+  );
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

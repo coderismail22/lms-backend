@@ -1,11 +1,12 @@
 export type TTeacher = {
   teacherName: string;
   email: string;
-  phone?: string;
+  salary: number;
   profileImg?: string;
-  subject: string;
-  qualifications: string[];
-  joiningDate: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  phone?: string;
+  // subject: string;
+  // qualifications: string[];
+  // joiningDate: string;
+  // createdAt?: Date;
+  // updatedAt?: Date;
 };

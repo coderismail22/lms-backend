@@ -6,24 +6,26 @@ const createTeacherValidationSchema = z.object({
     email: z.string().email("Email must be valid"),
     phone: z.string().optional(),
     profileImg: z.string().url("Profile image must be a valid URL").optional(),
-    subject: z.string().min(1, "Subject is required"),
-    qualifications: z
-      .array(z.string().min(1, "Qualification must not be empty"))
-      .min(1, "At least one qualification is required"),
-    joiningDate: z
-      .string()
-      .refine((dateString) => !isNaN(Date.parse(dateString)), {
-        message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
-      }),
+    salary: z.number().optional(),
+    // subject: z.string().min(1, "Subject is required"),
+    // qualifications: z
+    //   .array(z.string().min(1, "Qualification must not be empty"))
+    //   .min(1, "At least one qualification is required"),
+    // joiningDate: z
+    //   .string()
+    //   .refine((dateString) => !isNaN(Date.parse(dateString)), {
+    //     message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
+    //   }),
   }),
 });
 
 const updateTeacherValidationSchema = z.object({
   body: z.object({
     teacherName: z.string().optional(),
+    profileImg: z.string().url("Profile image must be a valid URL").optional(),
     email: z.string().email("Email must be valid").optional(),
     phone: z.string().optional(),
-    profileImg: z.string().url("Profile image must be a valid URL").optional(),
+    salary: z.number().optional(),
     subject: z.string().optional(),
     qualifications: z.array(z.string().min(1)).optional(),
     joiningDate: z

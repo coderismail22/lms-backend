@@ -4,7 +4,7 @@ import { TLesson } from "./lesson.interface";
 const LessonSchema = new Schema<TLesson>(
   {
     name: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
     content: { type: String, required: true },
     type: {
       type: String,

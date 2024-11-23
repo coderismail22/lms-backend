@@ -11,7 +11,7 @@ router.post(
   SubjectControllers.createSubject,
 );
 
-router.put(
+router.patch(
   "/update-subject/:id",
   validateRequest(SubjectValidations.updateSubjectValidationSchema),
   SubjectControllers.updateSubject,

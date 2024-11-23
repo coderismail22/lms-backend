@@ -20,41 +20,47 @@ const TeacherSchema = new Schema<TTeacher>(
         message: "Email must be valid",
       },
     },
-    phone: {
-      type: String,
-      trim: true,
-      default: null,
-    },
     profileImg: {
       type: String,
       trim: true,
       default: "",
     },
-    subject: {
-      type: String,
-      required: [true, "Subject is required"],
+    salary: {
+      type: Number,
       trim: true,
+      default: 0,
     },
-    qualifications: {
-      type: [String],
-      required: [true, "Qualifications are required"],
-      validate: {
-        validator: function (value: string[]) {
-          return value.length > 0 && value.every((v) => v.trim().length > 0);
-        },
-        message: "Qualifications must not be empty",
-      },
-    },
-    joiningDate: {
+    phone: {
       type: String,
-      required: [true, "Joining date is required"],
-      validate: {
-        validator: function (value: string) {
-          return !isNaN(Date.parse(value));
-        },
-        message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
-      },
+      trim: true,
+      default: null,
     },
+
+    // subject: {
+    //   type: String,
+    //   required: [true, "Subject is required"],
+    //   trim: true,
+    // },
+    // qualifications: {
+    //   type: [String],
+    //   required: [true, "Qualifications are required"],
+    //   validate: {
+    //     validator: function (value: string[]) {
+    //       return value.length > 0 && value.every((v) => v.trim().length > 0);
+    //     },
+    //     message: "Qualifications must not be empty",
+    //   },
+    // },
+    // joiningDate: {
+    //   type: String,
+    //   required: [true, "Joining date is required"],
+    //   validate: {
+    //     validator: function (value: string) {
+    //       return !isNaN(Date.parse(value));
+    //     },
+    //     message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
+    //   },
+    // },
   },
   { timestamps: true },
 );

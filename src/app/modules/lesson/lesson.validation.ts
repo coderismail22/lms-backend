@@ -3,7 +3,7 @@ import { z } from "zod";
 const createLessonValidationSchema = z.object({
   body: z.object({
     name: z.string().min(1, "Lesson name is required"),
-    description: z.string(),
+    description: z.string().optional(),
     content: z.string(),
     isCompleted: z.boolean().optional(),
     completedAt: z.date().optional(),
@@ -13,7 +13,7 @@ const createLessonValidationSchema = z.object({
 const updateLessonValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
-    description: z.string(),
+    description: z.string().optional(),
     content: z.string(),
   }),
 });
