@@ -4,7 +4,7 @@ import { Types } from "mongoose";
 export type TTopic = {
   name: string;
   description: string;
-  subjectId: Types.ObjectId;
+  // subjectId: Types.ObjectId;
   lessons: Types.ObjectId[];
   isDeleted: boolean;
 };

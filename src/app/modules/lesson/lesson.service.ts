@@ -18,7 +18,7 @@ const getLessonFromDB = async (lessonId: string) => {
 
 // Get all lessons
 const getAllLessonsFromDB = async () => {
-  return Lesson.find({ isDeleted: false });
+  return Lesson.find();
 };
 
 // Update a lesson
