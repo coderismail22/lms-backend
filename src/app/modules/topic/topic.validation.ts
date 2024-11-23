@@ -13,9 +13,7 @@ const updateTopicValidationSchema = z.object({
   body: z.object({
     name: z.string().optional(),
     description: z.string().optional(),
-  }),
-  params: z.object({
-    topicId: z.string().min(1, "Topic ID is required"),
+    lessons: z.array(z.string()).optional(),
   }),
 });
 
