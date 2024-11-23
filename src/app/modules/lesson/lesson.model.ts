@@ -8,7 +8,7 @@ const LessonSchema = new Schema<TLesson>(
     content: { type: String, required: true },
     type: {
       type: String,
-      enum: ["video", "assignment", "post"],
+      enum: ["video", "assignment", "post", "quiz"],
       required: true,
     },
     isCompleted: { type: Boolean, default: false }, // track progress
