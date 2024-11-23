@@ -18,7 +18,7 @@ const getLessonFromDB = async (lessonId: string) => {
 
 // Get all lessons
 const getAllLessonsFromDB = async () => {
-  return Lesson.find();
+  return Lesson.find().sort({ createdAt: -1 });
 };
 
 // Update a lesson
@@ -37,8 +37,8 @@ const updateLessonInDB = async (
 const deleteLessonFromDB = async (lessonId: string) => {
   const lesson = await Lesson.findById(lessonId);
   if (!lesson) throw new AppError(httpStatus.NOT_FOUND, "Lesson not found");
-  lesson.isDeleted = true;
-  return lesson.save();
+  const result = lesson.deleteOne();
+  return result;
 };
 
 export const LessonServices = {
