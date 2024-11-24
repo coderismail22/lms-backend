@@ -22,18 +22,18 @@ const createTeacherValidationSchema = z.object({
 const updateTeacherValidationSchema = z.object({
   body: z.object({
     teacherName: z.string().optional(),
-    profileImg: z.string().url("Profile image must be a valid URL").optional(),
+    profileImg: z.string().optional(), // TODO: add checking if user gives profile url
     email: z.string().email("Email must be valid").optional(),
     phone: z.string().optional(),
     salary: z.number().optional(),
-    subject: z.string().optional(),
-    qualifications: z.array(z.string().min(1)).optional(),
-    joiningDate: z
-      .string()
-      .optional()
-      .refine((dateString) => !dateString || !isNaN(Date.parse(dateString)), {
-        message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
-      }),
+    // subject: z.string().optional(),
+    // qualifications: z.array(z.string().min(1)).optional(),
+    // joiningDate: z
+    //   .string()
+    //   .optional()
+    //   .refine((dateString) => !dateString || !isNaN(Date.parse(dateString)), {
+    //     message: "Joining date must be a valid date (e.g., YYYY-MM-DD)",
+    //   }),
   }),
 });
 
