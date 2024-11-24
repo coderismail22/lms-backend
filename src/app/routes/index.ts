@@ -7,10 +7,15 @@ import { StudentRoutes } from "../modules/student/student.route";
 import { CategoryRoutes } from "../modules/category/category.route";
 import { BatchRoutes } from "../modules/batch/batch.route";
 import { TeacherRoutes } from "../modules/teacher/teacher.route";
+import { UserRoutes } from "../modules/user/user.route";
 
 const router = Router();
 
 const moduleRoutes = [
+  {
+    path: "/users",
+    route: UserRoutes,
+  },
   {
     path: "/categories",
     route: CategoryRoutes,

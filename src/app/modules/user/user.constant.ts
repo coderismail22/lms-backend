@@ -4,3 +4,5 @@ export const USER_ROLE = {
   teacher: "teacher",
   student: "student",
 } as const;
+
+export const STATUS = ["in-progress", "blocked"];
