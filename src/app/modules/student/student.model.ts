@@ -55,6 +55,7 @@ const courseProgressSchema = new Schema<ICourseProgress>({
 const studentSchema = new mongoose.Schema<IStudent>({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
+  password: { type: String, required: true },
   courses: { type: [courseProgressSchema], default: [] }, // Track progress for each course
 });
 

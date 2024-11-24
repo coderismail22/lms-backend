@@ -4,4 +4,5 @@ export type TAdmin = {
   profileImg?: string;
   email: string;
   phone: string;
+  role: "superAdmin" | "admin";
 };

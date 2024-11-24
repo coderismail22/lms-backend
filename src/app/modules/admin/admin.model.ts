@@ -35,6 +35,10 @@ const AdminSchema = new Schema<TAdmin>(
       trim: true,
       default: null,
     },
+    role: {
+      type: String,
+      enum: ["superAdmin", "admin"],
+    },
   },
   { timestamps: true },
 );
