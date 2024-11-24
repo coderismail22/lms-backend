@@ -8,6 +8,11 @@ const AdminSchema = new Schema<TAdmin>(
       required: [true, "Admin name is required"],
       trim: true,
     },
+    password: {
+      type: String,
+      required: [true, "Password is required"],
+      trim: true,
+    },
     email: {
       type: String,
       required: [true, "Email is required"],
