@@ -19,7 +19,7 @@ router.post(
 
 router.post(
   "/create-admin",
-  auth(USER_ROLE.superAdmin, USER_ROLE.admin),
+  // auth(USER_ROLE.superAdmin, USER_ROLE.admin), //TODO: Add a auth role
   validateRequest(AdminValidations.createAdminValidationSchema),
   UserControllers.createAdmin,
 );
