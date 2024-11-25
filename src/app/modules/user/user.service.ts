@@ -11,11 +11,8 @@ import { TAdmin } from "../admin/admin.interface";
 import { IStudent } from "../student/student.interface";
 
 const createStudentIntoDB = async (payload: IStudent) => {
-  console.log("create student payload", payload);
   // create a user object
   const userData: Partial<IUser> = {};
-
-  //set student role
   userData.name = payload.name;
   userData.role = "student";
   userData.email = payload.email;

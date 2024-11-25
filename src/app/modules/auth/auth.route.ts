@@ -13,19 +13,19 @@ router.post(
   AuthControllers.loginUser,
 );
 
-// Change Password
-router.post(
-  "/change-password",
-  auth(USER_ROLE.admin, USER_ROLE.faculty, USER_ROLE.student),
-  validateRequest(AuthValidations.changePasswordValidationSchema),
-  AuthControllers.changePassword,
-);
-
-// Refresh Password
+// Refresh Token
 router.post(
   "/refresh-token",
   validateRequest(AuthValidations.refreshTokenValidationSchema),
   AuthControllers.refreshToken,
+);
+
+// Change Password
+router.post(
+  "/change-password",
+  auth(USER_ROLE.admin, USER_ROLE.student),
+  validateRequest(AuthValidations.changePasswordValidationSchema),
+  AuthControllers.changePassword,
 );
 
 // Forgot Password

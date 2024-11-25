@@ -10,38 +10,34 @@ import sendEmail from "../../utils/sendEmail";
 
 // login
 const loginUser = async (payload: TLoginUser) => {
+  console.log("got user login details", payload);
+
   // 1. Check if the user exist
-  const user = await 
+  const user = await User.findOne({ email: payload?.email }).select(
+    "+password",
+  );
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
+  }
 
-  // TODO: Do these below validation later with static methods
-  // check: does the user exist
-  // const user = await User.doesUserExistByCustomId(payload?.id);
-  // if (!user) {
-  //   throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
-  // }
+  // 2. Check if the user is deleted
+  if (user?.isDeleted) {
+    throw new AppError(httpStatus.BAD_REQUEST, "The user has been deleted.");
+  }
 
-  // check: is the user deleted
-  // const isUserDeleted = user?.isDeleted;
-  // if (isUserDeleted) {
-  //   throw new AppError(httpStatus.NOT_FOUND, "The user has been deleted.");
-  // }
+  //3. Check if the user is blocked
+  if (user?.status === "blocked") {
+    throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
+  }
 
-  // check: userStatus
-  // const userStatus = user?.status;
-  // if (userStatus === "blocked") {
-  //   throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
-  // }
-
-  // check: doesPasswordMatch
-  // const doesPasswordMatch = await User.doPasswordsMatch(
-  //   payload?.password,
-  //   user?.password,
-  // );
-
-  // if (!doesPasswordMatch) {
-  //   throw new AppError(httpStatus.FORBIDDEN, "Passwords is incorrect.");
-  // }
-
+  // 4. Check if the password is correct
+  const isPasswordValid = await bcrypt.compare(
+    payload?.password,
+    user.password,
+  );
+  if (!isPasswordValid) {
+    throw new AppError(httpStatus.FORBIDDEN, "Password is incorrect.");
+  }
   //   TODO: send access and refresh token
 
   // create token and send to the client
@@ -64,63 +60,7 @@ const loginUser = async (payload: TLoginUser) => {
   return {
     accessToken,
     refreshToken,
-    // needsPasswordChange: user?.needsPasswordChange,
   };
-};
-
-//change password
-const changePassword = async (
-  userData: JwtPayload,
-  payload: { newPassword: string; oldPassword: string },
-) => {
-  // check: does the user exist
-  const user = await User.doesUserExistByCustomId(userData?.userId);
-  if (!user) {
-    throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
-  }
-
-  // check: is the user deleted
-  const isUserDeleted = user?.isDeleted;
-  if (isUserDeleted) {
-    throw new AppError(httpStatus.NOT_FOUND, "The user has been deleted.");
-  }
-
-  // check: userStatus
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
-    throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
-  }
-
-  // check: doesPasswordMatch
-  const doesPasswordMatch = await User.doPasswordsMatch(
-    payload?.oldPassword,
-    user?.password,
-  );
-
-  if (!doesPasswordMatch) {
-    throw new AppError(httpStatus.FORBIDDEN, "Passwords is incorrect.");
-  }
-
-  // Password hashing before saving
-  const newHashedPassword = await bcrypt.hash(
-    payload?.newPassword,
-    Number(config.bcrypt_salt_rounds),
-  );
-
-  // Finally Update Password Into DB
-  const result = await User.findOneAndUpdate(
-    {
-      id: userData?.userId,
-      role: userData?.role,
-    },
-    {
-      password: newHashedPassword,
-      needsPasswordChange: false,
-      passwordChangedAt: new Date(),
-    },
-  );
-
-  return result;
 };
 
 // access token renewal
@@ -186,6 +126,61 @@ const refreshToken = async (token: string) => {
     config.jwt_access_token_expires_in as string,
   );
   return accessToken;
+};
+
+//change password
+const changePassword = async (
+  userData: JwtPayload,
+  payload: { newPassword: string; oldPassword: string },
+) => {
+  // check: does the user exist
+  const user = await User.doesUserExistByCustomId(userData?.userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
+  }
+
+  // check: is the user deleted
+  const isUserDeleted = user?.isDeleted;
+  if (isUserDeleted) {
+    throw new AppError(httpStatus.NOT_FOUND, "The user has been deleted.");
+  }
+
+  // check: userStatus
+  const userStatus = user?.status;
+  if (userStatus === "blocked") {
+    throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
+  }
+
+  // check: doesPasswordMatch
+  const doesPasswordMatch = await User.doPasswordsMatch(
+    payload?.oldPassword,
+    user?.password,
+  );
+
+  if (!doesPasswordMatch) {
+    throw new AppError(httpStatus.FORBIDDEN, "Passwords is incorrect.");
+  }
+
+  // Password hashing before saving
+  const newHashedPassword = await bcrypt.hash(
+    payload?.newPassword,
+    Number(config.bcrypt_salt_rounds),
+  );
+
+  // Finally Update Password Into DB
+  const result = await User.findOneAndUpdate(
+    {
+      id: userData?.userId,
+      role: userData?.role,
+    },
+    {
+      password: newHashedPassword,
+      needsPasswordChange: false,
+      passwordChangedAt: new Date(),
+    },
+  );
+
+  return result;
 };
 
 // forgot password

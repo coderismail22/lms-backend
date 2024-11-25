@@ -8,6 +8,7 @@ import { CategoryRoutes } from "../modules/category/category.route";
 import { BatchRoutes } from "../modules/batch/batch.route";
 import { TeacherRoutes } from "../modules/teacher/teacher.route";
 import { UserRoutes } from "../modules/user/user.route";
+import { AuthRoutes } from "../modules/auth/auth.route";
 
 const router = Router();
 
@@ -15,6 +16,10 @@ const moduleRoutes = [
   {
     path: "/users",
     route: UserRoutes,
+  },
+  {
+    path: "/auth",
+    route: AuthRoutes,
   },
   {
     path: "/categories",
