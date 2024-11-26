@@ -2,7 +2,7 @@ import httpStatus from "http-status";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
 import AppError from "../../errors/AppError";
-import { Subject } from "../subject/subject.model";
+// import { Subject } from "../subject/subject.model";
 
 const createCourseIntoDB = async (course: TCourse) => {
   return Course.create(course);
@@ -19,24 +19,24 @@ const updateCourseInDB = async (
   return course;
 };
 
-const linkSubjectToCourse = async (data: {
-  courseId: string;
-  subjectId: string;
-}) => {
-  const { courseId, subjectId } = data;
+// const linkSubjectToCourse = async (data: {
+//   courseId: string;
+//   subjectId: string;
+// }) => {
+//   const { courseId, subjectId } = data;
 
-  const course = await Course.findById(courseId);
-  if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
+//   const course = await Course.findById(courseId);
+//   if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
 
-  const subject = await Subject.findById(subjectId);
-  if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
+//   const subject = await Subject.findById(subjectId);
+//   if (!subject) throw new AppError(httpStatus.NOT_FOUND, "Subject not found");
 
-  if (!course.subjects.includes(subject._id)) {
-    course.subjects.push(subject._id);
-  }
+//   if (!course.subjects.includes(subject._id)) {
+//     course.subjects.push(subject._id);
+//   }
 
-  return course.save();
-};
+//   return course.save();
+// };
 
 const getAllCoursesFromDB = async () => {
   const result = Course.find({ isDeleted: false }).populate({
@@ -86,7 +86,7 @@ const deleteCourseInDB = async (courseId: string) => {
 export const CourseServices = {
   createCourseIntoDB,
   updateCourseInDB,
-  linkSubjectToCourse,
+  // linkSubjectToCourse,
   getCourseFromDB,
   getAllCoursesFromDB,
   deleteCourseInDB,
