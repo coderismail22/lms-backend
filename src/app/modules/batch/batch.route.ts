@@ -10,7 +10,7 @@ const router = express.Router();
 // Create a new batch
 router.post(
   "/create-batch",
-  auth(USER_ROLE.student),
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(BatchValidations.createBatchValidationSchema),
   BatchControllers.createBatch,
 );
@@ -19,16 +19,25 @@ router.post(
 router.get("/:batchId", BatchControllers.getBatch);
 
 // Get all batches
-router.get("/", BatchControllers.getAllBatches);
+router.get(
+  "/",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  BatchControllers.getAllBatches,
+);
 
 // Update a batch by ID
 router.patch(
   "/update-batch/:batchId",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   validateRequest(BatchValidations.updateBatchValidationSchema),
   BatchControllers.updateBatch,
 );
 
 // Delete a batch by ID
-router.delete("/:batchId", BatchControllers.deleteBatch);
+router.delete(
+  "/:batchId",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  BatchControllers.deleteBatch,
+);
 
 export const BatchRoutes = router;
