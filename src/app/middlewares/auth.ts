@@ -10,7 +10,7 @@ import { User } from "../modules/user/user.model";
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;
-
+    console.log("hit token", token);
     // if token not provided
     if (!token) {
       throw new AppError(
@@ -26,9 +26,10 @@ const auth = (...requiredRoles: TUserRole[]) => {
     ) as JwtPayload;
 
     const { userId, role, iat } = decoded;
+    console.log("decoded from auth", userId, role, iat);
 
     // check: does the user exist
-    const user = await User.doesUserExistByCustomId(userId);
+    const user = await User.findById(userId);
     if (!user) {
       throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
     }
@@ -45,21 +46,22 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
     }
 
+    // TODO: check isJWTIsIssuedBeforeChangingPassword
     // check: isJWTIssuedAtBeforeChangingPassword
-    if (user?.passwordChangedAt) {
-      const isJWTIssuedAtBeforeChangingPassword =
-        await User.isJWTIssuedAtBeforeChangingPassword(
-          iat as number,
-          user.passwordChangedAt,
-        );
+    // if (user?.passwordChangedAt) {
+    //   const isJWTIssuedAtBeforeChangingPassword =
+    //     await User.isJWTIssuedAtBeforeChangingPassword(
+    //       iat as number,
+    //       user.passwordChangedAt,
+    //     );
 
-      if (isJWTIssuedAtBeforeChangingPassword) {
-        throw new AppError(
-          httpStatus.UNAUTHORIZED,
-          "You are not authorized to access!",
-        );
-      }
-    }
+    //   if (isJWTIssuedAtBeforeChangingPassword) {
+    //     throw new AppError(
+    //       httpStatus.UNAUTHORIZED,
+    //       "You are not authorized to access!",
+    //     );
+    //   }
+    // }
 
     // check if the user role is allowed
     if (requiredRoles && !requiredRoles.includes(role)) {

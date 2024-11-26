@@ -10,7 +10,6 @@ import sendEmail from "../../utils/sendEmail";
 
 // login
 const loginUser = async (payload: TLoginUser) => {
-  console.log("got user login details", payload);
 
   // 1. Check if the user exist
   const user = await User.findOne({ email: payload?.email }).select(
