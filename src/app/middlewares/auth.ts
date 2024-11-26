@@ -66,8 +66,8 @@ const auth = (...requiredRoles: TUserRole[]) => {
     // check if the user role is allowed
     if (requiredRoles && !requiredRoles.includes(role)) {
       throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        "You are not authorized to access!",
+        httpStatus.FORBIDDEN,
+        "You do not have permission to access this resource!",
       );
     }
 
