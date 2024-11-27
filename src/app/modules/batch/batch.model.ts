@@ -13,6 +13,12 @@ const BatchSchema = new Schema<TBatch>(
       required: [true, "Course name is required"],
       trim: true,
     },
+    courseId: {
+      type: Schema.Types.ObjectId,
+      ref: "Course",
+      required: [true, "Course id is required"],
+      trim: true,
+    },
     couponCode: {
       type: String,
       trim: true,
@@ -66,6 +72,10 @@ const BatchSchema = new Schema<TBatch>(
         },
         message: "End date must be a valid date (e.g., YYYY-MM-DD)",
       },
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
     },
   },
   { timestamps: true },

@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 export type TCourse = {
   name: string;
   description: string;
+  img: string;
   language: string;
   category: string;
   coursePrice: number;

@@ -13,6 +13,7 @@ const CourseSchema = new Schema<TCourse>(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
+    img: { type: String, required: true },
     language: { type: String, required: true },
     category: { type: String, required: true },
     coursePrice: { type: Number, required: true, min: 1 },

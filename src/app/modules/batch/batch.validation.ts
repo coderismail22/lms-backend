@@ -5,6 +5,7 @@ const createBatchValidationSchema = z.object({
     .object({
       batchName: z.string().min(1, "Batch name is required"),
       courseName: z.string().min(1, "Course name is required"),
+      courseId: z.string({ required_error: "Course id is required." }),
       couponCode: z.string().optional(), // Optional field
       discountPrice: z.coerce.number().optional(), // Automatically coerces to number
       maxStudentNumber: z.coerce
@@ -36,6 +37,8 @@ const updateBatchValidationSchema = z.object({
     .object({
       batchName: z.string().optional(),
       courseName: z.string().optional(),
+      courseId: z.string().optional(),
+      isActive: z.boolean().optional(),
       couponCode: z.string().optional(),
       discountPrice: z.coerce.number().optional(),
       maxStudentNumber: z.coerce.number().optional(),
