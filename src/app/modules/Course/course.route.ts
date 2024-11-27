@@ -37,4 +37,7 @@ router.delete(
   CourseControllers.deleteCourse,
 );
 
+// Route for fetching a course and its associated batches
+router.get("/:courseId/batches", CourseControllers.fetchCourseWithBatches);
+
 export const CourseRoutes = router;

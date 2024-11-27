@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
-import { CourseServices } from "./course.service";
+import { CourseServices, getCourseWithBatches } from "./course.service";
 import sendResponse from "../../utils/sendResponse";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
@@ -25,15 +25,15 @@ const updateCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-const linkSubjectToCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await CourseServices.linkSubjectToCourse(req.body);
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: "Subject linked to course successfully",
-    data: result,
-  });
-});
+// const linkSubjectToCourse = catchAsync(async (req: Request, res: Response) => {
+//   const result = await CourseServices.linkSubjectToCourse(req.body);
+//   sendResponse(res, {
+//     statusCode: httpStatus.OK,
+//     success: true,
+//     message: "Subject linked to course successfully",
+//     data: result,
+//   });
+// });
 
 const getCourse = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -67,11 +67,25 @@ const deleteCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+export const fetchCourseWithBatches = catchAsync(
+  async (req: Request, res: Response) => {
+    const { courseId } = req.params;
+    const courseData = await getCourseWithBatches(courseId);
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: "Course with batches fetched successfully",
+      data: courseData,
+    });
+  },
+);
+
 export const CourseControllers = {
   createCourse,
   updateCourse,
-  linkSubjectToCourse,
+  // linkSubjectToCourse,
   getCourse,
   getAllCourses,
   deleteCourse,
+  fetchCourseWithBatches,
 };

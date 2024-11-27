@@ -2,6 +2,7 @@ import httpStatus from "http-status";
 import { TCourse } from "./course.interface";
 import { Course } from "./course.model";
 import AppError from "../../errors/AppError";
+import mongoose from "mongoose";
 // import { Subject } from "../subject/subject.model";
 
 const createCourseIntoDB = async (course: TCourse) => {
@@ -83,6 +84,30 @@ const deleteCourseInDB = async (courseId: string) => {
   return course;
 };
 
+export const getCourseWithBatches = async (courseId: string) => {
+  const objectId = new mongoose.Types.ObjectId(courseId); // Convert courseId to ObjectId
+
+  const courseWithBatches = await Course.aggregate([
+    {
+      $match: { _id: objectId }, // Match the specific course by ID
+    },
+    {
+      $lookup: {
+        from: "batches", // Name of the Batch collection
+        localField: "_id", // Field in the Course collection
+        foreignField: "courseId", // Field in the Batch collection
+        as: "batches", // Alias for the joined data
+      },
+    },
+  ]);
+
+  if (!courseWithBatches.length) {
+    throw new Error("Course not found");
+  }
+
+  return courseWithBatches[0]; // Return the course with batches
+};
+
 export const CourseServices = {
   createCourseIntoDB,
   updateCourseInDB,
@@ -90,4 +115,5 @@ export const CourseServices = {
   getCourseFromDB,
   getAllCoursesFromDB,
   deleteCourseInDB,
+  getCourseWithBatches,
 };
