@@ -1,18 +1,22 @@
 import express from "express";
 import validateRequest from "../../middlewares/validateRequest";
 import { createPaymentValidationSchema } from "./payment.validation";
-import * as PaymentController from "./payment.controller";
-import auth from "../../middlewares/auth";
+// import auth from "../../middlewares/auth";
+import { PaymentControllers } from "./payment.controller";
 
 const router = express.Router();
 
 router.post(
   "/",
-  auth("student"),
+  // auth("student"),
   validateRequest(createPaymentValidationSchema),
-  PaymentController.createPayment,
+  PaymentControllers.createPayment,
 );
 
-router.get("/", auth("student"), PaymentController.getPayments);
+router.get(
+  "/",
+  // auth("student"),
+  PaymentControllers.getPayments,
+);
 
 export const PaymentRoutes = router;

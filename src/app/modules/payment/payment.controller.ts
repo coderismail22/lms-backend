@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { PaymentServices } from "./payment.service";
 
 export const createPayment = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
   const paymentData = { ...req.body, userId };
 
   const payment = await PaymentServices.createPayment(paymentData);
@@ -19,7 +19,7 @@ export const createPayment = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getPayments = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
 
   const payments = await PaymentServices.getPaymentsForUser(userId);
 

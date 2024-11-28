@@ -13,8 +13,20 @@ router.post(
   CartControllers.addToCart,
 );
 
-router.get("/", auth("student"), CartControllers.getCart);
-router.delete("/:cartItemId", auth("student"), CartControllers.removeFromCart);
-router.delete("/", auth("student"), CartControllers.clearCart);
+router.get(
+  "/",
+  auth("student"),
+  CartControllers.getCart,
+);
+router.delete(
+  "/:cartItemId",
+   auth("student"),
+  CartControllers.removeFromCart,
+);
+router.delete(
+  "/",
+   auth("student"),
+  CartControllers.clearCart,
+);
 
 export const CartRoutes = router;

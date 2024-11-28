@@ -13,7 +13,7 @@ const loginUser = catchAsync(async (req, res) => {
     secure: config.NODE_ENV === "production",
     httpOnly: true,
     // sameSite: "Strict", // Prevent CSRF
-    // path: "/",          // Cookie available site-wide
+    path: "/", // Cookie available site-wide
     maxAge: 7 * 24 * 60 * 60 * 1000, // Optional: 7 days
   });
 

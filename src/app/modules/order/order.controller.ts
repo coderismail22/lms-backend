@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { OrderServices } from "./order.service";
 
 export const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
   const { items, totalPrice, paymentMethod } = req.body;
 
   const order = await OrderServices.createOrder(
@@ -24,7 +24,7 @@ export const createOrder = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getOrders = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
 
   const orders = await OrderServices.getOrdersForUser(userId);
 

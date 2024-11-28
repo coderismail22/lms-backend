@@ -5,9 +5,8 @@ import { CartServices } from "./cart.service";
 import httpStatus from "http-status";
 
 export const addToCart = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
   const { batchId } = req.body;
-
   const cartItem = await CartServices.addItemToCart(userId, batchId);
 
   sendResponse(res, {
@@ -19,7 +18,7 @@ export const addToCart = catchAsync(async (req: Request, res: Response) => {
 });
 
 export const getCart = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
 
   const cartItems = await CartServices.getCartItems(userId);
 
@@ -33,7 +32,7 @@ export const getCart = catchAsync(async (req: Request, res: Response) => {
 
 export const removeFromCart = catchAsync(
   async (req: Request, res: Response) => {
-    const userId = req.user.id;
+    const userId = req?.user?.userId;
     const { cartItemId } = req.params;
 
     await CartServices.removeItemFromCart(userId, cartItemId);
@@ -47,7 +46,7 @@ export const removeFromCart = catchAsync(
 );
 
 export const clearCart = catchAsync(async (req: Request, res: Response) => {
-  const userId = req.user.id;
+  const userId = req?.user?.userId;
 
   await CartServices.clearCart(userId);
 
