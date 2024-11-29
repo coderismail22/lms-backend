@@ -12,7 +12,7 @@ const PaymentSchema = new Schema<TPayment>(
     },
     paymentStatus: {
       type: String,
-      enum: ["Pending", "Paid", "Failed"],
+      enum: ["Paid", "Failed"],
       default: "Pending",
     },
     transactionId: { type: String },

@@ -5,45 +5,66 @@ import { TPayment } from "./payment.interface";
 import { Payment } from "./payment.model";
 import mongoose from "mongoose";
 
-export const createPayment = async (paymentData: TPayment) => {
+const createPayment = async (paymentData: TPayment) => {
+  // TODO: Make paymentStatus dynamic (e.g., "Paid", "Failed") based on gateway response
+  const paymentStatus = "Paid"; // Default to "Paid" for now
+
   // Start a session for transaction
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    // Create the payment
-    const payment = await Payment.create([paymentData], { session });
-    if (!payment || payment.length === 0) {
-      throw new AppError(httpStatus.BAD_REQUEST, "Failed to create payment");
+    // Handle only successful payments
+    if (paymentStatus === "Paid") {
+      // Create the payment record
+      const payment = await Payment.create(
+        [{ ...paymentData, paymentStatus }],
+        { session },
+      );
+
+      if (!payment || payment.length === 0) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Failed to create payment");
+      }
+
+      // Create the order record associated with the payment
+      const order = await Order.create(
+        [
+          {
+            userId: payment[0].userId,
+            paymentId: payment[0]._id,
+          },
+        ],
+        { session },
+      );
+
+      if (!order || order.length === 0) {
+        throw new AppError(httpStatus.BAD_REQUEST, "Failed to create order");
+      }
+
+      // Commit the transaction
+      await session.commitTransaction();
+      return payment[0];
+    } else if (paymentStatus === "Failed") {
+      // Handle failed payment case
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        "Payment status indicates failure. No order created.",
+      );
+    } else {
+      // Handle unexpected payment statuses
+      throw new AppError(
+        httpStatus.BAD_REQUEST,
+        `Unexpected payment status: ${paymentStatus}`,
+      );
     }
-
-    // Create the order
-    const order = await Order.create(
-      [
-        {
-          userId: payment[0].userId,
-          paymentId: payment[0]._id,
-        },
-      ],
-      { session },
-    );
-    if (!order || order.length === 0) {
-      throw new AppError(httpStatus.BAD_REQUEST, "Failed to create order");
-    }
-
-    // Commit the transaction
-    await session.commitTransaction();
-    session.endSession();
-
-    return payment[0];
   } catch (error) {
-    // Rollback the transaction
+    // Rollback the transaction in case of error
     await session.abortTransaction();
+    console.error("Transaction failed:", error);
+    throw new AppError(httpStatus.INTERNAL_SERVER_ERROR, "Transaction failed");
+  } finally {
+    // End the session
     session.endSession();
-
-    // Log and rethrow the error
-    console.error("Transaction failed: ", error);
-    throw error;
   }
 };
 
