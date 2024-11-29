@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const createOrderValidationSchema = z.object({
+const createOrderValidationSchema = z.object({
   body: z.object({
     items: z.array(
       z.object({
@@ -14,4 +14,19 @@ export const createOrderValidationSchema = z.object({
   }),
 });
 
-export const OrderValidations = { createOrderValidationSchema };
+const approveOrderValidation = z.object({
+  params: z.object({
+    orderId: z.string().length(24, "Invalid Order ID"),
+  }),
+});
+
+const declineOrderValidation = z.object({
+  params: z.object({
+    orderId: z.string().length(24, "Invalid Order ID"),
+  }),
+});
+export const OrderValidations = {
+  createOrderValidationSchema,
+  approveOrderValidation,
+  declineOrderValidation,
+};

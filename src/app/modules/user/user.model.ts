@@ -22,10 +22,7 @@ const userSchema = new Schema<IUser>(
     passwordChangedAt: {
       type: Date,
     },
-    // needsPasswordChange: {
-    //   type: Boolean,
-    //   default: false,
-    // },
+
     role: {
       type: String,
       enum: ["superAdmin", "student", "faculty", "admin"],

@@ -9,7 +9,7 @@ import { BatchRoutes } from "../modules/batch/batch.route";
 import { TeacherRoutes } from "../modules/teacher/teacher.route";
 import { UserRoutes } from "../modules/user/user.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
-import { CartRoutes } from "../modules/cart/cart.route";
+import { CartRoutes } from "../modules/cart(unused)/cart.route";
 import { PaymentRoutes } from "../modules/payment/payment.route";
 import { OrderRoutes } from "../modules/order/order.route";
 

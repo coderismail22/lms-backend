@@ -9,7 +9,7 @@ import { User } from "./user.model";
 import { Admin } from "../admin/admin.model";
 import { TAdmin } from "../admin/admin.interface";
 import { IStudent } from "../student/student.interface";
-import { Cart } from "../cart/cart.model";
+import { Cart } from "../cart(unused)/cart.model";
 
 const createStudentIntoDB = async (payload: IStudent) => {
   // create a user object

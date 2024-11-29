@@ -49,8 +49,42 @@ export const getOrder = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// Approve
+const approveOrderController = catchAsync(async (req, res) => {
+  const { orderId } = req.params;
+
+  // Call the service function to approve the order
+  const result = await OrderServices.approveOrder(orderId);
+
+  // Send success response
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order approved successfully",
+    data: result,
+  });
+});
+
+// Decline
+const declineOrderController = catchAsync(async (req, res) => {
+  const { orderId } = req.params;
+
+  // Call the service function to decline the order
+  const result = await OrderServices.declineOrder(orderId);
+
+  // Send success response
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Order declined successfully",
+    data: result,
+  });
+});
+
 export const OrderControllers = {
   createOrder,
   getOrders,
   getOrder,
+  approveOrderController,
+  declineOrderController,
 };
