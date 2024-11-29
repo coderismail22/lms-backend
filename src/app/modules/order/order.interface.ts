@@ -2,12 +2,10 @@ import { Types } from "mongoose";
 
 export type TOrder = {
   userId: Types.ObjectId;
-  items: {
-    batchId: Types.ObjectId;
-    courseId: Types.ObjectId;
-    price: number;
-  }[];
+  name: string;
+  batchId: Types.ObjectId;
+  courseId: Types.ObjectId;
   totalPrice: number;
-  paymentMethod: string;
-  paymentStatus: "Pending" | "Paid" | "Failed";
+  paymentId: Types.ObjectId;
+  orderStatus: "Pending" | "Approved" | "Declined";
 };

@@ -6,4 +6,5 @@ export type TCartItem = {
   courseId: Types.ObjectId;
   price: number;
   quantity: number;
+  items:[]
 };

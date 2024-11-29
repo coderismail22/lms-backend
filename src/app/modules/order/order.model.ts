@@ -4,26 +4,10 @@ import { TOrder } from "./order.interface";
 const OrderSchema = new Schema<TOrder>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    items: [
-      {
-        batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },
-        courseId: {
-          type: Schema.Types.ObjectId,
-          ref: "Course",
-          required: true,
-        },
-        price: { type: Number, required: true },
-      },
-    ],
-    totalPrice: { type: Number, required: true },
-    paymentMethod: {
+    paymentId: { type: Schema.Types.ObjectId, ref: "Payment", required: true },
+    orderStatus: {
       type: String,
-      enum: ["Stripe", "PayPal", "Manual"],
-      required: true,
-    },
-    paymentStatus: {
-      type: String,
-      enum: ["Pending", "Paid", "Failed"],
+      enum: ["Pending", "Approved", "Declined"],
       default: "Pending",
     },
   },

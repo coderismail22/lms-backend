@@ -6,14 +6,16 @@ import { PaymentServices } from "./payment.service";
 
 export const createPayment = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
-  const paymentData = { ...req.body, userId };
+  const { batchId } = req.params;
+  const paymentData = { ...req.body, userId, batchId };
+  // console.log("paymentData", paymentData);
 
   const payment = await PaymentServices.createPayment(paymentData);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Payment record created",
+    message: "Payment record and order created successfully.",
     data: payment,
   });
 });

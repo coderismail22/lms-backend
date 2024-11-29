@@ -4,10 +4,10 @@ import { TPayment } from "./payment.interface";
 const PaymentSchema = new Schema<TPayment>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    orderId: { type: Schema.Types.ObjectId, ref: "Order", required: true },
+    batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },
     paymentMethod: {
       type: String,
-      enum: ["Stripe", "PayPal", "Manual"],
+      enum: ["Bkash", "Rocket", "Nogod"],
       required: true,
     },
     paymentStatus: {
@@ -17,6 +17,8 @@ const PaymentSchema = new Schema<TPayment>(
     },
     transactionId: { type: String },
     amount: { type: Number, required: true },
+    payerNumber: { type: String },
+    payeeNumber: { type: String, default: "01730481212" },
   },
   { timestamps: true },
 );
