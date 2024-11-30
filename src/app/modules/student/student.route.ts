@@ -26,7 +26,11 @@ router.post(
   StudentControllers.initializeCourseProgress,
 );
 
-router.get("/:userId/courses", StudentControllers.getStudentCourses);
+router.get(
+  "/user/courses",
+  auth(USER_ROLE.student, USER_ROLE.admin, USER_ROLE.superAdmin),
+  StudentControllers.getStudentCourses,
+);
 
 router.get(
   "/:studentId/courses/:courseId",
