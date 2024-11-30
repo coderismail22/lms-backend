@@ -10,7 +10,6 @@ import sendEmail from "../../utils/sendEmail";
 
 // login
 const loginUser = async (payload: TLoginUser) => {
-
   // 1. Check if the user exist
   const user = await User.findOne({ email: payload?.email }).select(
     "+password",
@@ -40,7 +39,7 @@ const loginUser = async (payload: TLoginUser) => {
   //   TODO: send access and refresh token
 
   // create token and send to the client
-  const jwtPayload = { userId: user?.id, role: user?.role };
+  const jwtPayload = { userId: user?.id, email: user?.email, role: user?.role };
 
   // generate access token
   const accessToken = createToken(

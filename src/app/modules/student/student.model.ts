@@ -1,5 +1,5 @@
 // Models
-import mongoose, { Schema, model } from "mongoose";
+import { Schema, model } from "mongoose";
 import {
   ICourseProgress,
   ILessonProgress,
@@ -11,7 +11,7 @@ import {
 // Lesson Progress Schema
 const lessonProgressSchema = new Schema<ILessonProgress>({
   lessonId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Lesson",
     required: true,
   },
@@ -23,7 +23,7 @@ const lessonProgressSchema = new Schema<ILessonProgress>({
 // Topic Progress Schema
 const topicProgressSchema = new Schema<ITopicProgress>({
   topicId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Topic",
     required: true,
   },
@@ -33,7 +33,7 @@ const topicProgressSchema = new Schema<ITopicProgress>({
 // Subject Progress Schema
 const subjectProgressSchema = new Schema<ISubjectProgress>({
   subjectId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Subject",
     required: true,
   },
@@ -43,7 +43,7 @@ const subjectProgressSchema = new Schema<ISubjectProgress>({
 // Course Progress Schema
 const courseProgressSchema = new Schema<ICourseProgress>({
   courseId: {
-    type: mongoose.Schema.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: "Course",
     required: true,
   },
@@ -51,7 +51,7 @@ const courseProgressSchema = new Schema<ICourseProgress>({
 });
 
 // Student Schema
-const studentSchema = new mongoose.Schema<IStudent>({
+const studentSchema = new Schema<IStudent>({
   name: { type: String, required: true },
   email: { type: String, unique: true, required: true },
   password: { type: String, required: true },

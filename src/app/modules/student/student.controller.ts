@@ -15,6 +15,17 @@ const createStudent = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getStudent = catchAsync(async (req: Request, res: Response) => {
+  const email = req.params.email;
+  const student = await StudentServices.getStudent(email);
+  sendResponse(res, {
+    success: true,
+    message: "Student retrieved successfully",
+    statusCode: httpStatus.OK,
+    data: student,
+  });
+});
+
 const initializeCourseProgress = catchAsync(
   async (req: Request, res: Response) => {
     const result = await StudentServices.initializeCourseProgress(req.body);
@@ -87,6 +98,7 @@ const updateLessonProgress = catchAsync(async (req: Request, res: Response) => {
 
 export const StudentControllers = {
   createStudent,
+  getStudent,
   initializeCourseProgress,
   getStudentCourses,
   getStudentCourseDetails,

@@ -5,6 +5,16 @@ import { Student } from "./student.model";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
 
+// Get a student
+const getStudent = async (studentEmail: string) => {
+  const student = await Student.findOne({ email: studentEmail }).select({
+    _id: 1,
+    name: 1,
+    email: 1,
+  });
+  return student;
+};
+
 // Get a single course's details for a specific student, including progress tracking
 const getCourseDetailsForStudent = async (
   studentId: string,
@@ -147,8 +157,24 @@ const createStudentInDB = async (data: {
 const getAllCoursesForStudent = async (studentId: string) => {
   const student = await Student.findById(studentId).populate({
     path: "courses.courseId",
-    select: "name description subjects",
+    model: "Course", // Populating the courseId field
+    populate: {
+      path: "subjects.subjectId", // Populating the subjectId field within the course
+      model: "Subject",
+      populate: {
+        path: "topics.topicId", // Populating the topicId field within the subject
+        model: "Topic",
+        populate: {
+          path: "lessons.lessonId", // Populating the lessonId field within the topic
+          model: "Lesson",
+        },
+      },
+    },
   });
+  // .populate({
+  //   path: "courses.courseId",
+  //   select: "name description subjects",
+  // });
 
   if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
 
@@ -278,6 +304,7 @@ const updateLessonProgress = async ({
 
 export const StudentServices = {
   createStudentInDB,
+  getStudent,
   initializeCourseProgress,
   getAllCoursesForStudent,
   getCourseDetailsForStudent,
