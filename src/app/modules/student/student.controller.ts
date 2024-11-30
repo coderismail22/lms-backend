@@ -40,8 +40,9 @@ const initializeCourseProgress = catchAsync(
 
 // Get all courses enrolled by the student
 const getStudentCourses = catchAsync(async (req: Request, res: Response) => {
-  const { studentId } = req.params;
-  const courses = await StudentServices.getAllCoursesForStudent(studentId);
+  // const { studentId } = req.params;
+  const { userId } = req.params; // using userId for easier access
+  const courses = await StudentServices.getAllCoursesForStudent(userId);
 
   return sendResponse(res, {
     statusCode: httpStatus.OK,

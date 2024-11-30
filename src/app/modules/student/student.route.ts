@@ -26,7 +26,7 @@ router.post(
   StudentControllers.initializeCourseProgress,
 );
 
-router.get("/:studentId/courses", StudentControllers.getStudentCourses);
+router.get("/:userId/courses", StudentControllers.getStudentCourses);
 
 router.get(
   "/:studentId/courses/:courseId",

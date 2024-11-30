@@ -4,6 +4,7 @@ import { ICourseProgress } from "./student.interface";
 import { Student } from "./student.model";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
+import { User } from "../user/user.model";
 
 // Get a student
 const getStudent = async (studentEmail: string) => {
@@ -154,8 +155,16 @@ const createStudentInDB = async (data: {
 };
 
 // Get all courses for a specific student, with progress information
-const getAllCoursesForStudent = async (studentId: string) => {
-  const student = await Student.findById(studentId).populate({
+const getAllCoursesForStudent = async (userId: string) => {
+  // find user
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+  }
+  console.log(user);
+
+  // Find student id
+  const student = await Student.findOne({ email: user?.email }).populate({
     path: "courses.courseId",
     model: "Course", // Populating the courseId field
     populate: {
@@ -171,14 +180,11 @@ const getAllCoursesForStudent = async (studentId: string) => {
       },
     },
   });
-  // .populate({
-  //   path: "courses.courseId",
-  //   select: "name description subjects",
-  // });
 
   if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");
-
-  return student.courses; // Returns courses with limited details for list view
+  const courses = student?.courses;
+  const studentId = student?._id;
+  return { courses, studentId }; // Returns courses with limited details for list view
 };
 
 const getLastCompletedLesson = async (studentId: string, courseId: string) => {
