@@ -37,8 +37,11 @@ const approveOrder = async (orderId: string) => {
     }
 
     // Step 2: Validate user and payment documents
-    const user = order.userId;
-    const payment = order.paymentId;
+    // TODO: Make two types for user and payments
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const user: any = order.userId;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const payment: any = order.paymentId;
     if (!user || !payment) {
       throw new AppError(httpStatus.BAD_REQUEST, "User or Payment not found");
     }
@@ -108,7 +111,9 @@ const getOrdersForUser = async (userId: string) => {
 
 // Get all orders for admin of all the students
 export const getAllOrdersForAdmin = async () => {
-  const allOrders = await Order.find();
+  const allOrders = await Order.find()
+    .sort({ createdAt: -1 })
+    .populate("userId paymentId");
   return allOrders;
 };
 // Get order by id

@@ -1,17 +1,15 @@
 import express from "express";
-import validateRequest from "../../middlewares/validateRequest";
-import { OrderValidations } from "./order.validation";
 // import auth from "../../middlewares/auth";
 import { OrderControllers } from "./order.controller";
 
 const router = express.Router();
 
-router.post(
-  "/",
-  // auth("student"),
-  validateRequest(OrderValidations.createOrderValidationSchema),
-  OrderControllers.createOrder,
-);
+// router.post(
+//   "/",
+//   // auth("student"),
+//   validateRequest(OrderValidations.createOrderValidationSchema),
+//   OrderControllers.createOrder,
+// );
 
 // Get all orders for admin of all students
 router.get(

@@ -4,24 +4,24 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { OrderServices } from "./order.service";
 
-export const createOrder = catchAsync(async (req: Request, res: Response) => {
-  const userId = req?.user?.userId;
-  const { items, totalPrice, paymentMethod } = req.body;
+// const createOrder = catchAsync(async (req: Request, res: Response) => {
+//   const userId = req?.user?.userId;
+//   const { items, totalPrice, paymentMethod } = req.body;
 
-  const order = await OrderServices.createOrder(
-    userId,
-    items,
-    totalPrice,
-    paymentMethod,
-  );
+//   const order = await OrderServices.createOrder(
+//     userId,
+//     items,
+//     totalPrice,
+//     paymentMethod,
+//   );
 
-  sendResponse(res, {
-    success: true,
-    statusCode: httpStatus.OK,
-    message: "Order created successfully",
-    data: order,
-  });
-});
+//   sendResponse(res, {
+//     success: true,
+//     statusCode: httpStatus.OK,
+//     message: "Order created successfully",
+//     data: order,
+//   });
+// });
 
 export const getOrders = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
@@ -96,7 +96,6 @@ const declineOrderController = catchAsync(async (req, res) => {
 });
 
 export const OrderControllers = {
-  createOrder,
   getOrders,
   getOrder,
   getAllOrdersForAdmin,
