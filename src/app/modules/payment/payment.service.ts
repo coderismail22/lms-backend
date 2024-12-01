@@ -68,6 +68,10 @@ const createPayment = async (paymentData: TPayment) => {
   }
 };
 
+const getAllPayments = async () => {
+  const allPayments = await Payment.find();
+  return allPayments;
+};
 export const getPaymentsForUser = async (userId: string) => {
   return Payment.find({ userId });
 };
@@ -75,4 +79,5 @@ export const getPaymentsForUser = async (userId: string) => {
 export const PaymentServices = {
   createPayment,
   getPaymentsForUser,
+  getAllPayments,
 };

@@ -4,7 +4,7 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { PaymentServices } from "./payment.service";
 
-export const createPayment = catchAsync(async (req: Request, res: Response) => {
+const createPayment = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
   const { batchId } = req.params;
   const paymentData = { ...req.body, userId, batchId };
@@ -20,7 +20,17 @@ export const createPayment = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
-export const getPayments = catchAsync(async (req: Request, res: Response) => {
+const getAllPayments = catchAsync(async (req: Request, res: Response) => {
+  const allPayments = await PaymentServices.getAllPayments();
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "All payments retrieved successfully.",
+    data: allPayments,
+  });
+});
+
+const getPaymentsForUser = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
 
   const payments = await PaymentServices.getPaymentsForUser(userId);
@@ -35,5 +45,6 @@ export const getPayments = catchAsync(async (req: Request, res: Response) => {
 
 export const PaymentControllers = {
   createPayment,
-  getPayments,
+  getPaymentsForUser,
+  getAllPayments,
 };

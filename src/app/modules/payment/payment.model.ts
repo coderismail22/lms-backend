@@ -19,7 +19,7 @@ const PaymentSchema = new Schema<TPayment>(
     transactionId: { type: String },
     amount: { type: Number, required: true },
     payerNumber: { type: String },
-    payeeNumber: { type: "01730481212" },
+    payeeNumber: { type: String, default: "01730481212" },
   },
   { timestamps: true },
 );
