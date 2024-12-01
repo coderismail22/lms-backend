@@ -40,7 +40,6 @@ const createPayment = async (paymentData: TPayment) => {
       if (!order || order.length === 0) {
         throw new AppError(httpStatus.BAD_REQUEST, "Failed to create order");
       }
-
       // Commit the transaction
       await session.commitTransaction();
       return payment[0];

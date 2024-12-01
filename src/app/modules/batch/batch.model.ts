@@ -77,10 +77,10 @@ const BatchSchema = new Schema<TBatch>(
       type: Boolean,
       default: true,
     },
-    // enrolledStudents: {
-    //   type: Boolean,
-    //   default: true,
-    // },
+    enrolledStudents: {
+      type: [{ type: Schema.Types.ObjectId, ref: "Student" }],
+      default: [],
+    },
   },
   { timestamps: true },
 );

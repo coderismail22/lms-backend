@@ -5,6 +5,7 @@ import httpStatus from "http-status";
 import { OrderServices } from "./order.service";
 
 // const createOrder = catchAsync(async (req: Request, res: Response) => {
+
 //   const userId = req?.user?.userId;
 //   const { items, totalPrice, paymentMethod } = req.body;
 
@@ -23,9 +24,10 @@ import { OrderServices } from "./order.service";
 //   });
 // });
 
-export const getOrders = catchAsync(async (req: Request, res: Response) => {
+// Get all orders for a student
+const getOrders = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
-
+console.log('user id', userId)
   const orders = await OrderServices.getOrdersForUser(userId);
 
   sendResponse(res, {

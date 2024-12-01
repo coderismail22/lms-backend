@@ -1,6 +1,8 @@
 import express from "express";
 // import auth from "../../middlewares/auth";
 import { OrderControllers } from "./order.controller";
+import { USER_ROLE } from "../user/user.constant";
+import auth from "../../middlewares/auth";
 
 const router = express.Router();
 
@@ -19,11 +21,7 @@ router.get(
 );
 
 // Get all orders for students
-router.get(
-  "/",
-  // auth("student"),
-  OrderControllers.getOrders,
-);
+router.get("/", auth(USER_ROLE.student), OrderControllers.getOrders);
 
 // Get one specific order for student
 router.get(

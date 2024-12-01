@@ -63,6 +63,13 @@ const approveOrder = async (orderId: string) => {
     if (!batch) {
       throw new AppError(httpStatus.NOT_FOUND, "Batch not found");
     }
+
+    // Add the student to the batch's enrolledStudents field
+    if (!batch.enrolledStudents.includes(student._id)) {
+      batch.enrolledStudents.push(student._id);
+      await batch.save({ session });
+    }
+
     await StudentServices.initializeCourseProgress({
       studentId: student._id.toString(),
       courseId: batch.courseId.toString(),
@@ -104,8 +111,15 @@ const declineOrder = async (orderId: string) => {
 // For student specific
 const getOrdersForUser = async (userId: string) => {
   const order = await Order.find({ userId })
-    .populate("items.batchId")
-    .populate("items.courseId");
+    .sort({ createdAt: -1 })
+    .populate({
+      path: "paymentId",
+      model: "Payment",
+      populate: {
+        path: "batchId",
+        model: "Batch",
+      },
+    });
   return order;
 };
 
