@@ -84,7 +84,7 @@ const deleteCourseInDB = async (courseId: string) => {
   return course;
 };
 
-export const getCourseWithBatches = async (courseId: string) => {
+const getCourseWithBatches = async (courseId: string) => {
   const objectId = new mongoose.Types.ObjectId(courseId); // Convert courseId to ObjectId
 
   const courseWithBatches = await Course.aggregate([

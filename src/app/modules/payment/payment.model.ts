@@ -5,9 +5,10 @@ const PaymentSchema = new Schema<TPayment>(
   {
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     batchId: { type: Schema.Types.ObjectId, ref: "Batch", required: true },
+    name: { type: String, required: true },
     paymentMethod: {
       type: String,
-      enum: ["Bkash", "Rocket", "Nogod"],
+      enum: ["bkash", "rocket", "nogod"],
       required: true,
     },
     paymentStatus: {
@@ -18,7 +19,7 @@ const PaymentSchema = new Schema<TPayment>(
     transactionId: { type: String },
     amount: { type: Number, required: true },
     payerNumber: { type: String },
-    payeeNumber: { type: String, default: "01730481212" },
+    payeeNumber: { type: "01730481212" },
   },
   { timestamps: true },
 );

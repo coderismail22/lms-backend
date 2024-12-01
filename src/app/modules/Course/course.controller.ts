@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import catchAsync from "../../utils/catchAsync";
-import { CourseServices, getCourseWithBatches } from "./course.service";
+import { CourseServices } from "./course.service";
 import sendResponse from "../../utils/sendResponse";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
@@ -70,7 +70,7 @@ const deleteCourse = catchAsync(async (req: Request, res: Response) => {
 export const fetchCourseWithBatches = catchAsync(
   async (req: Request, res: Response) => {
     const { courseId } = req.params;
-    const courseData = await getCourseWithBatches(courseId);
+    const courseData = await CourseServices.getCourseWithBatches(courseId);
     sendResponse(res, {
       statusCode: httpStatus.OK,
       success: true,
