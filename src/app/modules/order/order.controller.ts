@@ -36,6 +36,20 @@ export const getOrders = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+// All orders for admin of all the students
+export const getAllOrdersForAdmin = catchAsync(
+  async (req: Request, res: Response) => {
+    const allOrders = await OrderServices.getAllOrdersForAdmin();
+    sendResponse(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "All orders fetched successfully",
+      data: allOrders,
+    });
+  },
+);
+
+// Single order by id
 export const getOrder = catchAsync(async (req: Request, res: Response) => {
   const { orderId } = req.params;
 
@@ -85,6 +99,7 @@ export const OrderControllers = {
   createOrder,
   getOrders,
   getOrder,
+  getAllOrdersForAdmin,
   approveOrderController,
   declineOrderController,
 };

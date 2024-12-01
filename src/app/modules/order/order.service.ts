@@ -98,6 +98,7 @@ const declineOrder = async (orderId: string) => {
   return order;
 };
 
+// For student specific
 const getOrdersForUser = async (userId: string) => {
   const order = await Order.find({ userId })
     .populate("items.batchId")
@@ -105,6 +106,12 @@ const getOrdersForUser = async (userId: string) => {
   return order;
 };
 
+// Get all orders for admin of all the students
+export const getAllOrdersForAdmin = async () => {
+  const allOrders = await Order.find();
+  return allOrders;
+};
+// Get order by id
 export const getOrderById = async (orderId: string) => {
   return Order.findById(orderId)
     .populate("items.batchId")
@@ -114,6 +121,7 @@ export const getOrderById = async (orderId: string) => {
 export const OrderServices = {
   approveOrder,
   declineOrder,
+  getAllOrdersForAdmin,
   getOrdersForUser,
   getOrderById,
 };

@@ -13,11 +13,21 @@ router.post(
   OrderControllers.createOrder,
 );
 
+// Get all orders for admin of all students
+router.get(
+  "/get-all-orders-for-admin",
+  // auth("student"),
+  OrderControllers.getAllOrdersForAdmin,
+);
+
+// Get all orders for students
 router.get(
   "/",
   // auth("student"),
   OrderControllers.getOrders,
 );
+
+// Get one specific order for student
 router.get(
   "/:orderId",
   // auth("student"),
