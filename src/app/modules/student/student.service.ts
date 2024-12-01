@@ -15,6 +15,11 @@ const getStudent = async (studentEmail: string) => {
   });
   return student;
 };
+// Get all students
+const getAllStudents = async () => {
+  const students = await Student.find();
+  return students;
+};
 
 // Get a single course's details for a specific student, including progress tracking
 const getCourseDetailsForStudent = async (
@@ -161,8 +166,6 @@ const getAllCoursesForStudent = async (userId: string) => {
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User not found");
   }
-  console.log(user);
-
   // Find student id
   const student = await Student.findOne({ email: user?.email }).populate({
     path: "courses.courseId",
@@ -311,6 +314,7 @@ const updateLessonProgress = async ({
 export const StudentServices = {
   createStudentInDB,
   getStudent,
+  getAllStudents,
   initializeCourseProgress,
   getAllCoursesForStudent,
   getCourseDetailsForStudent,

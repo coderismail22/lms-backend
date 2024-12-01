@@ -13,10 +13,18 @@ router.post(
   validateRequest(StudentValidations.createStudentValidationSchema),
   StudentControllers.createStudent,
 );
+// single student
 router.get(
   "/:email",
   auth(USER_ROLE.student, USER_ROLE.admin, USER_ROLE.superAdmin),
   StudentControllers.getStudent,
+);
+
+// all students
+router.get(
+  "/",
+  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  StudentControllers.getAllStudents,
 );
 
 // TODO: add student auth role
