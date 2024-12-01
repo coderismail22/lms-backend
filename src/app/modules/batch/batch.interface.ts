@@ -14,4 +14,5 @@ export type TBatch = {
   createdAt?: Date;
   updatedAt?: Date;
   isActive: boolean;
+  enrolledStudents: Types.ObjectId;
 };

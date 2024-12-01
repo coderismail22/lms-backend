@@ -77,6 +77,10 @@ const BatchSchema = new Schema<TBatch>(
       type: Boolean,
       default: true,
     },
+    // enrolledStudents: {
+    //   type: Boolean,
+    //   default: true,
+    // },
   },
   { timestamps: true },
 );

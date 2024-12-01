@@ -18,7 +18,7 @@ const getTopicFromDB = async (topicId: string) => {
   return topic;
 };
 
-// Get all topics
+// Sync while update topic
 const getAllTopicsFromDB = async () => {
   return Topic.find({ isDeleted: false }).populate("lessons");
 };
@@ -29,6 +29,10 @@ const updateTopicInDB = async (topicId: string, topicData: Partial<TTopic>) => {
     new: true,
   });
   if (!topic) throw new AppError(httpStatus.NOT_FOUND, "Topic not found");
+  // Sync the course progress after the topic update
+  // TODO: isCompleted field of lesson is not being true even after sync
+  // TODO: 
+  await syncCourseProgress("67419c54275560ab07de57a4");
   return topic;
 };
 
@@ -58,7 +62,7 @@ const linkLessonToTopic = async (data: {
   await topic.save();
 
   // Find the associated course ID for the topic
-  const course = await Course.findOne({ subjects: topic.subjectId });
+  const course = await Course.findOne({ subjects: topic?.subjectId });
   if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
 
   // Sync course progress for all students in this course
