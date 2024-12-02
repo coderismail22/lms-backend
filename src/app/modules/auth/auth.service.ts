@@ -77,10 +77,11 @@ const refreshToken = async (token: string) => {
     config.jwt_refresh_secret as string,
   ) as JwtPayload;
 
-  const { role, userId, iat } = decoded;
+  // used "iat"
+  const { role, userId } = decoded;
 
   // check: does the user exist
-  const user = await User.doesUserExistByCustomId(userId);
+  const user = await User.findOne({ _id: userId });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
   }
@@ -97,21 +98,22 @@ const refreshToken = async (token: string) => {
     throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
   }
 
+  // TODO: check isJWTIssuedAtBeforeChangingPassword
   // check: isJWTIssuedAtBeforeChangingPassword
-  if (user?.passwordChangedAt) {
-    const isJWTIssuedAtBeforeChangingPassword =
-      await User.isJWTIssuedAtBeforeChangingPassword(
-        iat as number,
-        user.passwordChangedAt,
-      );
+  // if (user?.passwordChangedAt) {
+  //   const isJWTIssuedAtBeforeChangingPassword =
+  //     await User.isJWTIssuedAtBeforeChangingPassword(
+  //       iat as number,
+  //       user.passwordChangedAt,
+  //     );
 
-    if (isJWTIssuedAtBeforeChangingPassword) {
-      throw new AppError(
-        httpStatus.UNAUTHORIZED,
-        "You are not authorized to access!",
-      );
-    }
-  }
+  // TODO: check isJWTIssuedAtBeforeChangingPassword
+  // if (isJWTIssuedAtBeforeChangingPassword) {
+  //   throw new AppError(
+  //     httpStatus.UNAUTHORIZED,
+  //     "You are not authorized to access!",
+  //   );
+  // }
 
   const jwtPayload = {
     userId: userId,
@@ -203,7 +205,7 @@ const forgotPassword = async (userId: string) => {
 
   // Token generation
   const jwtPayload = {
-    userId: user.id,
+    userId: user._id,
     role: user.role,
   };
 
@@ -212,7 +214,7 @@ const forgotPassword = async (userId: string) => {
     config.jwt_access_secret as string,
     "10m",
   );
-  const resetPasswordUILink = `${config.reset_password_ui_link}?id=${user.id}&token=${resetToken}`;
+  const resetPasswordUILink = `${config.reset_password_ui_link}?id=${user._id}&token=${resetToken}`;
   console.log(resetPasswordUILink);
   sendEmail(resetPasswordUILink);
 };
