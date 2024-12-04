@@ -14,11 +14,13 @@ const app: Application = express();
 //parsers
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  cors({ origin: ["https://falah-ismail-lms.netlify.app", "http://localhost:5173"], credentials: true }),
+);
 
 // application routes
 app.get("/", (req: Request, res: Response) => {
-  res.status(200).json({ message: "Welcome to lms server" });
+  res.status(200).json({ message: "Welcome to lms server " });
 });
 
 app.use("/api/v1", router);

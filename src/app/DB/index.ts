@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import config from "../config";
 import { TAdmin } from "../modules/admin/admin.interface";
 import { Admin } from "../modules/admin/admin.model";
-import { STATUS, USER_ROLE } from "../modules/user/user.constant";
+import { USER_ROLE } from "../modules/user/user.constant";
 import { User } from "../modules/user/user.model";
 
 // For Admin Model
@@ -49,11 +49,11 @@ const seedSuperAdmin = async () => {
 
     // Commit the transaction if all operations are successful
     await session.commitTransaction();
-    console.log("Super admin seeded successfully.");
+    // console.log("Super admin seeded successfully.");
   } catch (error) {
     // Rollback the transaction in case of an error
     await session.abortTransaction();
-    console.error("Error seeding super admin:", error);
+    // console.error("Error seeding super admin:", error);
   } finally {
     // End the session
     session.endSession();

@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import httpStatus from "http-status";
 import mongoose from "mongoose";
-import config from "../../config";
 import AppError from "../../errors/AppError";
 import { Student } from "../student/student.model";
 import { IUser } from "./user.interface";
@@ -9,7 +8,6 @@ import { User } from "./user.model";
 import { Admin } from "../admin/admin.model";
 import { TAdmin } from "../admin/admin.interface";
 import { IStudent } from "../student/student.interface";
-import { Cart } from "../cart(unused)/cart.model";
 
 const createStudentIntoDB = async (payload: IStudent) => {
   // create a user object

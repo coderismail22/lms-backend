@@ -32,7 +32,7 @@ const updateTopicInDB = async (topicId: string, topicData: Partial<TTopic>) => {
   // Sync the course progress after the topic update
   // TODO: isCompleted field of lesson is not being true even after sync
   // TODO: 
-  await syncCourseProgress("67419c54275560ab07de57a4");
+  // await syncCourseProgress("67419c54275560ab07de57a4");
   return topic;
 };
 
