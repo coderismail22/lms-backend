@@ -45,7 +45,7 @@ const createStudentIntoDB = async (payload: IStudent) => {
   } catch (err: any) {
     await session.abortTransaction();
     await session.endSession();
-    throw new Error(err);
+    throw err;
   }
 };
 

@@ -1,16 +1,27 @@
-import { TErrorSources, TGenericErrorResponse } from '../interface/error';
+import { TErrorSources, TGenericErrorResponse } from "../interface/error";
 
-const handleDuplicateError = (err: any): TGenericErrorResponse => {
-  // Extract value within double quotes using regex
-  const match = err.message.match(/"([^"]*)"/);
+type MongoDuplicateKeyError = {
+  index: number;
+  code: number; // Usually 11000 for duplicate key errors
+  keyPattern: Record<string, number>; // Example: { email: 1 }
+  keyValue: Record<string, string>; // Example: { email: "test@example.com" }
+  message: string; // The raw error message from MongoDB
+};
 
-  // The extracted value will be in the first capturing group
-  const extractedMessage = match && match[1];
+const handleDuplicateError = (
+  err: MongoDuplicateKeyError,
+): TGenericErrorResponse => {
+  // Extract field name and value from the error
+  const duplicateField = Object.keys(err.keyValue)[0]; // Get the field causing the error
+  const duplicateValue = err.keyValue[duplicateField]; // Get the duplicate value
+
+  // Format the error message
+  const errorMessage = `${duplicateField} ${duplicateValue} already exists.`;
 
   const errorSources: TErrorSources = [
     {
-      path: '',
-      message: `${extractedMessage} is already exists`,
+      path: duplicateField, // Set the path to the specific field causing the error
+      message: errorMessage,
     },
   ];
 
@@ -18,7 +29,7 @@ const handleDuplicateError = (err: any): TGenericErrorResponse => {
 
   return {
     statusCode,
-    message: 'Invalid ID',
+    message: "Duplicate key error",
     errorSources,
   };
 };
