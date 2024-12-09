@@ -20,7 +20,22 @@ const getBatchFromDB = async (batchId: string) => {
 const getAllBatchesFromDB = async () => {
   const result = await Batch.find()
     .sort({ createdAt: -1 })
-    .populate("courseId");
+    .populate({
+      path: "courseId",
+      model: "Course",
+      populate: {
+        path: "subjects",
+        model: "Subject",
+        populate: {
+          path: "topics",
+          model: "Topic",
+          populate: {
+            path: "lessons",
+            model: "Lesson",
+          },
+        },
+      },
+    });
   return result;
 };
 
