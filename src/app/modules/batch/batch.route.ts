@@ -25,7 +25,7 @@ router.get(
 // Get all batches
 router.get(
   "/",
-  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  // auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   BatchControllers.getAllBatches,
 );
 

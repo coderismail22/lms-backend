@@ -15,7 +15,14 @@ const app: Application = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
-  cors({ origin: ["https://falah-ismail-lms.netlify.app", "http://localhost:5173"], credentials: true }),
+  cors({
+    origin: [
+      "https://falah-ismail-lms.netlify.app",
+      "http://localhost:5173",
+      "https://ejobsit.com",
+    ],
+    credentials: true,
+  }),
 );
 
 // application routes

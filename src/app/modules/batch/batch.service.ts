@@ -18,7 +18,9 @@ const getBatchFromDB = async (batchId: string) => {
 };
 
 const getAllBatchesFromDB = async () => {
-  const result = await Batch.find().sort({ createdAt: -1 });
+  const result = await Batch.find()
+    .sort({ createdAt: -1 })
+    .populate("courseId");
   return result;
 };
 
