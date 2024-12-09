@@ -3,7 +3,6 @@ import { Student } from "../student/student.model";
 import { Course } from "./course.model";
 
 export const syncCourseProgress = async (courseId: string) => {
-  console.log("hitting sync progress util func");
 
   // Fetch the course with all its subjects, topics, and lessons
   const course = await Course.findById(courseId).populate<{
@@ -95,7 +94,6 @@ export const syncCourseProgress = async (courseId: string) => {
 
       // Save the updated student progress with newly added content
       await student.save();
-      console.log("new lesson added successfully", student);
     }
   }
 };

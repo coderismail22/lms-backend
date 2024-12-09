@@ -11,9 +11,7 @@ import handleZodError from "../errors/handleZodError";
 import { TErrorSources } from "../interface/error";
 
 const globalErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  // console.log("Incoming error:", err); // Inspect the error object
-  // console.log("Error name:", err?.name); // Log error name
-  // console.log("Error code:", err?.code); // Log error code
+
   
   //setting default values
   let statusCode = 500;

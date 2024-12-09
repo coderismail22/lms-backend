@@ -8,7 +8,6 @@ const createPayment = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
   const { batchId } = req.params;
   const paymentData = { ...req.body, userId, batchId };
-  // console.log("paymentData", paymentData);
 
   const payment = await PaymentServices.createPayment(paymentData);
 

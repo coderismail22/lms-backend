@@ -20,11 +20,9 @@ export const sendImageToCloudinary = async (
       public_id: imageName,
     });
 
-    console.log("Upload successful:", uploadResult);
 
     // Delete the local file asynchronously after successful upload
     await fs.unlink(path);
-    console.log("Local file deleted successfully");
 
     return uploadResult;
   } catch (error) {
@@ -33,7 +31,6 @@ export const sendImageToCloudinary = async (
     // Ensure file is deleted even if the upload fails (cleanup)
     try {
       await fs.unlink(path);
-      console.log("Local file deleted after failure");
     } catch (deleteError) {
       console.error("Error deleting local file:", deleteError);
     }

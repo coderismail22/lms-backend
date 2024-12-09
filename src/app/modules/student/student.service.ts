@@ -26,7 +26,6 @@ const getCourseDetailsForStudent = async (
   studentId: string,
   courseId: string,
 ) => {
-  console.log(studentId, courseId);
 
   // Check if the course exists in the database
   const courseExists = await Course.exists({ _id: courseId });
@@ -80,7 +79,6 @@ const initializeCourseProgress = async ({
   studentId: string;
   courseId: string;
 }) => {
-  console.log(studentId, courseId);
   const student = await Student.findById(studentId);
 
   if (!student) throw new AppError(httpStatus.NOT_FOUND, "Student not found");

@@ -27,7 +27,6 @@ import { OrderServices } from "./order.service";
 // Get all orders for a student
 const getOrders = catchAsync(async (req: Request, res: Response) => {
   const userId = req?.user?.userId;
-console.log('user id', userId)
   const orders = await OrderServices.getOrdersForUser(userId);
 
   sendResponse(res, {

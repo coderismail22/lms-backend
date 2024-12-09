@@ -54,7 +54,6 @@ const getAllCoursesFromDB = async () => {
   return result;
 };
 const getCourseFromDB = async (courseId: string) => {
-  console.log(courseId);
   const course = await Course.findById(courseId).populate({
     path: "subjects",
     populate: {
@@ -68,7 +67,6 @@ const getCourseFromDB = async (courseId: string) => {
     model: "Subject", // Ensure `Subject` model is used here
   });
 
-  console.log(course);
 
   if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
   return course;

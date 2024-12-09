@@ -42,8 +42,7 @@ const linkLessonToTopic = async (data: {
   lessonId: string;
 }) => {
   const { topicId, lessonId } = data;
-  console.log(topicId);
-  console.log(lessonId);
+  
 
   // Find the topic and check if it exists
   const topic = await Topic.findById(topicId);
@@ -66,7 +65,6 @@ const linkLessonToTopic = async (data: {
   if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
 
   // Sync course progress for all students in this course
-  console.log("_id from topic service of course", course._id);
   await syncCourseProgress(course._id.toString());
 
   return topic;
