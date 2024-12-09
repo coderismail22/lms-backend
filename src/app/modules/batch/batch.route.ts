@@ -18,7 +18,7 @@ router.post(
 // Get a specific batch by ID
 router.get(
   "/:batchId",
-  auth(USER_ROLE.admin, USER_ROLE.superAdmin),
+  // auth(USER_ROLE.admin, USER_ROLE.superAdmin),
   BatchControllers.getBatch,
 );
 
