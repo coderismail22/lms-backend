@@ -3,7 +3,6 @@ import { Student } from "../student/student.model";
 import { Course } from "./course.model";
 
 export const syncCourseProgress = async (courseId: string) => {
-
   // Fetch the course with all its subjects, topics, and lessons
   const course = await Course.findById(courseId).populate<{
     subjects: Array<{

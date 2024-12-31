@@ -3,6 +3,7 @@ import { Types } from "mongoose";
 export type TCourse = {
   name: string;
   description: string;
+  overview: string;
   img: string;
   language: string;
   category: string;
@@ -15,5 +16,7 @@ export type TCourse = {
   curriculum?: string[];
   jobPositions?: string[];
   softwareList?: string[];
+  projectNumber: number;
+  classNumber: number;
   isDeleted: boolean;
 };

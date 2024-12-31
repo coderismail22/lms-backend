@@ -67,7 +67,6 @@ const getCourseFromDB = async (courseId: string) => {
     model: "Subject", // Ensure `Subject` model is used here
   });
 
-
   if (!course) throw new AppError(httpStatus.NOT_FOUND, "Course not found");
   return course;
 };

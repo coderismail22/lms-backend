@@ -13,6 +13,7 @@ const CourseSchema = new Schema<TCourse>(
   {
     name: { type: String, required: true },
     description: { type: String, required: true },
+    overview: { type: String, required: true },
     img: { type: String, required: true },
     language: { type: String, required: true },
     category: { type: String, required: true },
@@ -25,6 +26,8 @@ const CourseSchema = new Schema<TCourse>(
     curriculum: [{ type: String }],
     jobPositions: [{ type: String }],
     softwareList: [{ type: String }],
+    projectNumber: { type: Number },
+    classNumber: { type: Number },
     isDeleted: { type: Boolean, default: false },
   },
   { timestamps: true },

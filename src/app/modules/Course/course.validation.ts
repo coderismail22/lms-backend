@@ -4,10 +4,13 @@ export const createCourseValidationSchema = z.object({
   body: z.object({
     name: z.string().min(1, "Name is required"),
     description: z.string().min(1, "Description is required"),
+    overview: z.string().min(1, "Overview is required"),
     img: z.string(),
     language: z.string().min(1, "Language is required"),
     category: z.string().min(1, "Category is required"),
     coursePrice: z.coerce.number().min(1, "Price must be greater than 0"),
+    projectNumber: z.number(),
+    classNumber: z.number(),
     courseLength: z.string().min(1, "Course length is required"),
     skillLevel: z.string().min(1, "Skill level is required"),
     courseType: z.string().min(1, "Course type is required"),
