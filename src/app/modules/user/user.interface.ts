@@ -11,6 +11,12 @@ export interface IUser {
   passwordChangedAt?: Date;
   role: "superAdmin" | "admin" | "student" | "faculty";
   status: "in-progress" | "blocked";
+  // OTP
+  verificationCode: string | null;
+  otpExpiresAt: Date | null;
+  lastOtpSentAt: Date; // To handle resend delay
+  isVerified: boolean;
+
   isDeleted: boolean;
 }
 

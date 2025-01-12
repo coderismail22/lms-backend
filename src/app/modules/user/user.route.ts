@@ -17,6 +17,20 @@ router.post(
   UserControllers.createStudent,
 );
 
+//resend otp
+router.post(
+  "/resend-otp",
+  validateRequest(UserValidations.resendOTPValidationSchema),
+  UserControllers.resendOTP,
+);
+
+//verify otp
+router.post(
+  "/verify-otp",
+  validateRequest(UserValidations.verifyOTPValidationSchema),
+  UserControllers.verifyOTP,
+);
+
 router.post(
   "/create-admin",
   // auth(USER_ROLE.superAdmin, USER_ROLE.admin), //TODO: Add a auth role

@@ -13,6 +13,20 @@ const createStudent = catchAsync(async (req, res) => {
   });
 });
 
+// Resend OTP (with delay)
+const resendOTP = catchAsync(async (req, res) => {
+  const { email } = req.body;
+  const message = await UserServices.resendOTP(email);
+  res.status(200).json({ message });
+});
+
+// Verify OTP
+const verifyOTP = catchAsync(async (req, res) => {
+  const { email, verificationCode } = req.body;
+  const message = await UserServices.verifyOTP(email, verificationCode);
+  res.status(200).json({ message });
+});
+
 const createAdmin = catchAsync(async (req, res) => {
   const result = await UserServices.createAdminIntoDB(req.body);
 
@@ -52,6 +66,8 @@ const changeStatus = catchAsync(async (req, res) => {
 
 export const UserControllers = {
   createStudent,
+  resendOTP,
+  verifyOTP,
   createAdmin,
   getMe,
   changeStatus,
