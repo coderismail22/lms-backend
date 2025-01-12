@@ -9,10 +9,15 @@ const createBatchInDB = async (batchData: TBatch) => {
 };
 
 const getBatchFromDB = async (batchId: string) => {
-  const batch = await Batch.findById(batchId).populate({
-    path: "enrolledStudents",
-    model: "Student",
-  });
+  const batch = await Batch.findById(batchId)
+    .populate({
+      path: "enrolledStudents", // Path for the students field
+      model: "Student", // Associated model
+    })
+    .populate({
+      path: "trainers", // Path for the trainers field
+      model: "Teacher", // Associated model
+    });
   if (!batch) throw new AppError(httpStatus.NOT_FOUND, "Batch not found");
   return batch;
 };
@@ -35,6 +40,10 @@ const getAllBatchesFromDB = async () => {
           },
         },
       },
+    })
+    .populate({
+      path: "trainers",
+      model: "Teacher",
     });
   return result;
 };

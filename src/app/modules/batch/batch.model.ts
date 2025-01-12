@@ -44,11 +44,14 @@ const BatchSchema = new Schema<TBatch>(
       default: "", // Optional field
     },
     trainers: {
-      type: [String],
+      type: [Schema.Types.ObjectId],
       required: [true, "At least one trainer is required"],
       validate: {
-        validator: function (value: string[]) {
-          return value.length > 0 && value.every((v) => v.trim().length > 0);
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        validator: function (value: any[]) {
+          return (
+            value.length > 0 && value.every((v) => v.toString().length > 0)
+          );
         },
         message: "Trainer names must not be empty",
       },

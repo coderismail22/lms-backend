@@ -8,7 +8,7 @@ export type TBatch = {
   discountPrice?: number;
   maxStudentNumber: number;
   batchImg?: string;
-  trainers: string[];
+  trainers: [Types.ObjectId];
   startDate: string;
   endDate: string;
   createdAt?: Date;
