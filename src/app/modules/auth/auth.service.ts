@@ -7,6 +7,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../../config";
 import { createToken } from "./auth.utils";
 import sendEmail from "../../utils/sendEmail";
+import { generateOTP, sendVerificationEmail } from "../user/user.util";
 
 // login
 const loginUser = async (payload: TLoginUser) => {
@@ -29,14 +30,31 @@ const loginUser = async (payload: TLoginUser) => {
   }
 
   // 4. Check if the password is correct
-  const isPasswordValid = await bcrypt.compare(
-    payload?.password,
-    user.password,
-  );
+  const isPasswordValid = payload?.password === user?.password;
   if (!isPasswordValid) {
     throw new AppError(httpStatus.FORBIDDEN, "Password is incorrect.");
   }
-  //   TODO: send access and refresh token
+
+  // 5.If the user is not verified, generate OTP and send via email
+  const otp = generateOTP();
+  const otpExpiry = new Date();
+  otpExpiry.setMinutes(otpExpiry.getMinutes() + 5); // OTP valid for 5 mins
+
+  if (!user.isVerified) {
+    // update user user otp related fields
+    user.verificationCode = otp;
+    user.otpExpiresAt = otpExpiry;
+    user.lastOtpSentAt = new Date();
+    await sendVerificationEmail(user.email, otp);
+    // ✅ Return state indicating user needs to verify first
+    return {
+      isVerified: false,
+      message: "User not verified. OTP sent to the registered email.",
+    };
+  }
+
+  // ✅ 6. If verified, generate tokens
+  //   TODO: send access and refresh token properly
 
   // create token and send to the client
   const jwtPayload = { userId: user?.id, email: user?.email, role: user?.role };
@@ -56,6 +74,7 @@ const loginUser = async (payload: TLoginUser) => {
   );
 
   return {
+    isVerified: true,
     accessToken,
     refreshToken,
   };

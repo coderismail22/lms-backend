@@ -8,33 +8,7 @@ import { User } from "./user.model";
 import { Admin } from "../admin/admin.model";
 import { TAdmin } from "../admin/admin.interface";
 import { IStudent } from "../student/student.interface";
-import nodemailer from "nodemailer";
-import config from "../../config";
-
-// generateOTP
-const generateOTP = () =>
-  Math.floor(100000 + Math.random() * 900000).toString();
-
-// sendVerificationEmail
-const sendVerificationEmail = async (email: string, otp: string) => {
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: config.email_address,
-      pass: config.email_password,
-    },
-    tls: {
-      rejectUnauthorized: false, // Accept self-signed certificates
-    },
-  });
-
-  await transporter.sendMail({
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: "Your OTP Code",
-    text: `Your OTP code is: ${otp}. It will expire in 5 minutes.`,
-  });
-};
+import { generateOTP, sendVerificationEmail } from "./user.util";
 
 const createStudentIntoDB = async (payload: IStudent) => {
   const otp = generateOTP();

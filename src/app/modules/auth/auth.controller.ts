@@ -8,6 +8,19 @@ import config from "../../config";
 // login controller
 const loginUser = catchAsync(async (req, res) => {
   const result = await AuthServices.loginUser(req.body);
+  // If the user is not verified, send a response without tokens
+  if (!result.isVerified) {
+    return sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: result?.message,
+      data: {
+        isVerified: false, // Explicitly indicate user is not verified
+      },
+    });
+  }
+
+  // If the user is verified, proceed with token generation and response
   const { accessToken, refreshToken } = result;
   res.cookie("refreshToken", refreshToken, {
     secure: config.NODE_ENV === "production",
@@ -22,6 +35,7 @@ const loginUser = catchAsync(async (req, res) => {
     success: true,
     message: "Login successful",
     data: {
+      isVerified: true,
       accessToken,
       refreshToken,
     },
