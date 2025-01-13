@@ -203,26 +203,25 @@ const changePassword = async (
 };
 
 // forgot password
-const forgotPassword = async (userId: string) => {
+const forgotPassword = async (email: string) => {
   // check: does the user exist
-  const user = await User.doesUserExistByCustomId(userId);
+  const user = await User.findOne({ email });
+
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
   }
 
   // check: is the user deleted
-  const isUserDeleted = user?.isDeleted;
-  if (isUserDeleted) {
+  if (user?.isDeleted) {
     throw new AppError(httpStatus.NOT_FOUND, "The user has been deleted.");
   }
 
   // check: userStatus
-  const userStatus = user?.status;
-  if (userStatus === "blocked") {
+  if (user?.status === "blocked") {
     throw new AppError(httpStatus.FORBIDDEN, "The user has been blocked.");
   }
 
-  // Token generation
+  // Generate a secure token using JWT
   const jwtPayload = {
     userId: user._id,
     role: user.role,
@@ -233,16 +232,20 @@ const forgotPassword = async (userId: string) => {
     config.jwt_access_secret as string,
     "10m",
   );
-  const resetPasswordUILink = `${config.reset_password_ui_link}?id=${user._id}&token=${resetToken}`;
-  sendEmail(resetPasswordUILink);
+  const resetPasswordUILink = `${config.reset_password_ui_link}?id=${user?._id}&token=${resetToken}`;
+  sendEmail(user.email, resetPasswordUILink);
+  return {
+    message: "Password reset link sent successfully.",
+  };
 };
 
 const resetPassword = async (
-  payload: { id: string; newPassword: string },
+  id: string,
   token: string,
+  newPassword: string,
 ) => {
   // check: does the user exist
-  const user = await User.doesUserExistByCustomId(payload.id);
+  const user = await User.findOne({ _id: id });
   if (!user) {
     throw new AppError(httpStatus.NOT_FOUND, "User does not exist.");
   }
@@ -266,27 +269,27 @@ const resetPassword = async (
   ) as JwtPayload;
 
   // do user matches
-  if (payload.id !== decoded.userId) {
+  if (id !== decoded.userId) {
     throw new AppError(
       httpStatus.NOT_FOUND,
       "User doesn't have access to the specified service.",
     );
   }
 
-  // Password hashing before saving
-  const newHashedPassword = await bcrypt.hash(
-    payload?.newPassword,
-    Number(config.bcrypt_salt_rounds),
-  );
+  // TODO: Hash passwords if needed hashing before saving
+  // const newHashedPassword = await bcrypt.hash(
+  //   newPassword,
+  //   Number(config.bcrypt_salt_rounds),
+  // );
 
   // Finally Update Password Into DB
   const result = await User.findOneAndUpdate(
     {
-      id: decoded?.userId,
+      _id: decoded?.userId,
       role: decoded?.role,
     },
     {
-      password: newHashedPassword,
+      password: newPassword,
       needsPasswordChange: false,
       passwordChangedAt: new Date(),
     },
