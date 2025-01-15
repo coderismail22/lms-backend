@@ -11,6 +11,7 @@ import { UserRoutes } from "../modules/user/user.route";
 import { AuthRoutes } from "../modules/auth/auth.route";
 import { PaymentRoutes } from "../modules/payment/payment.route";
 import { OrderRoutes } from "../modules/order/order.route";
+import { SeminarRoutes } from "../modules/seminar/seminar.route";
 
 const router = Router();
 
@@ -62,6 +63,10 @@ const moduleRoutes = [
   {
     path: "/students",
     route: StudentRoutes,
+  },
+  {
+    path: "/seminar",
+    route: SeminarRoutes,
   },
 ];
 
