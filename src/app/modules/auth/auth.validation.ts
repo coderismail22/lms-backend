@@ -28,8 +28,9 @@ const forgotPasswordValidationSchema = z.object({
 
 const resetPasswordValidationSchema = z.object({
   body: z.object({
-    email: z.string({ required_error: "User email is required" }),
-    newPassword: z.string({ required_error: "New password is required" }),
+    newPassword: z.string({
+      required_error: "Password must be at least 6 characters.",
+    }),
   }),
 });
 

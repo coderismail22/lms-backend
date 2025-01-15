@@ -5,6 +5,7 @@ const LessonSchema = new Schema<TLesson>(
   {
     name: { type: String, required: true },
     description: { type: String },
+    materials: { type: [{ name: String, link: String }], default: [] },
     content: { type: String, required: true },
     type: {
       type: String,

@@ -15,7 +15,24 @@ const changeUserStatusValidationSchema = z.object({
   }),
 });
 
+const resendOTPValidationSchema = z.object({
+  body: z.object({
+    email: z.string(),
+  }),
+});
+
+const verifyOTPValidationSchema = z.object({
+  body: z.object({
+    email: z.string({ required_error: "Email is required" }),
+    verificationCode: z.string({
+      required_error: "Verification code is required",
+    }),
+  }),
+});
+
 export const UserValidations = {
   userValidationSchema,
   changeUserStatusValidationSchema,
+  resendOTPValidationSchema,
+  verifyOTPValidationSchema,
 };

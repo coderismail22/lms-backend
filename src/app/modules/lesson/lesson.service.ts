@@ -26,6 +26,7 @@ const updateLessonInDB = async (
   lessonId: string,
   lessonData: Partial<TLesson>,
 ) => {
+
   const lesson = await Lesson.findByIdAndUpdate(lessonId, lessonData, {
     new: true,
   });
