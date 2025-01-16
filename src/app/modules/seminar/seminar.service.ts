@@ -17,7 +17,10 @@ const getSeminarFromDB = async (seminarId: string) => {
 };
 
 const getAllSeminarsFromDB = async () => {
-  const seminars = await Seminar.find();
+  const seminars = await Seminar.find().sort({ createdAt: -1 }).populate({
+    path: "trainers",
+    model: "Teacher",
+  });
   return seminars;
 };
 

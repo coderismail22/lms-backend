@@ -26,7 +26,7 @@ const SeminarSchema = new Schema<ISeminar>(
         "Other",
       ],
     },
-    trainers: [{ type: Schema.Types.ObjectId, ref: "Trainer", required: true }],
+    trainers: [{ type: Schema.Types.ObjectId, ref: "Teacher", required: true }],
     isUpcoming: { type: Boolean, default: true },
     location: { type: String },
     googleFormUrl: { type: String },
